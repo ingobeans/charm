@@ -24,6 +24,7 @@ function clickProject(element) {
     } else {
         element.classList.add("selected-project");
     }
+
     let amt = count(document.querySelectorAll(".selected-project"));
     if (amt > 0) {
         if (viewBtn.hasAttribute("disabled")) {
@@ -48,13 +49,15 @@ for (let input of document.querySelectorAll("input")) {
     input.addEventListener("input", inputChange);
 }
 
-tokenInput.addEventListener("input", () => {
+function fetchProjects() {
     let value = tokenInput.value;
     if (value == "") {
         tokenInputError.innerHTML = "";
         return;
     } else if (value.length != 43) {
         tokenInputError.innerHTML = errorSvg + "Invalid Hackatime token.";
+        return;
+    } else if (!startDateInput.value) {
         return;
     }
     tokenInputError.innerHTML = "";
@@ -81,5 +84,9 @@ tokenInput.addEventListener("input", () => {
                 projectSelectContainer.appendChild(entry);
             }
         }))
-    })
-});
+    });
+}
+
+tokenInput.addEventListener("input", fetchProjects);
+startDateInput.addEventListener("input", fetchProjects);
+endDateInput.addEventListener("input", fetchProjects);

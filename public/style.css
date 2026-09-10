@@ -41,6 +41,27 @@ label {
     padding: 5px;
 }
 
+.info-mark {
+    display: inline;
+    position: relative;
+    text-decoration: underline;
+}
+
+.info-mark>div {
+    display: none;
+    position: absolute;
+    width: 380px;
+    top: 0;
+    background-color: var(--bg);
+    left: 0;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.info-mark:hover>div {
+    display: block;
+}
+
 .pfp {
     width: 64px;
     border-radius: 10px;

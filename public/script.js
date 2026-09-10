@@ -89,8 +89,12 @@ function fetchProjects() {
             }
             authorContainer.style.display = "";
             authorSlackId.innerText = data["slack_id"] || "";
-            authorName.innerText = data["username"] || "<unknown>";
             authorPfp.src = data["pfp"] || "/placeholder.png";
+            if (data["username"]) {
+                authorName.innerText = data["username"];
+            } else {
+                authorName.innerHTML = "[unknown]<div class='info-mark'>?<div>The OAuth App that issued the selected token doesn't have the profile scope</div></div>";
+            }
         }))
     });
 }

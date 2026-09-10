@@ -16,6 +16,11 @@ label {
     margin-bottom: 5px;
 }
 
+.input-field-row {
+    display: flex;
+    gap: 15px;
+}
+
 .input-field {
     margin-bottom: 15px;
 }

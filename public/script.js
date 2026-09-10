@@ -5,6 +5,7 @@ let errorSvg = `<svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox
 let tokenInput = gd("token-input");
 let tokenInputError = gd("token-input-error");
 let startDateInput = gd("start-date-input");
+let startDateInputError = gd("start-date-input-error");
 let endDateInput = gd("end-date-input");
 let projectSelectContainer = gd("project-select");
 let viewBtn = gd("view-btn");
@@ -33,6 +34,18 @@ function clickProject(element) {
             viewBtn.setAttribute("disabled", "");
         }
     }
+}
+
+function inputChange() {
+    if (!startDateInput.value) {
+        startDateInputError.innerHTML = errorSvg + "Required.";
+    } else {
+        startDateInputError.innerHTML = "";
+    }
+}
+
+for (let input of document.querySelectorAll("input")) {
+    input.addEventListener("input", inputChange);
 }
 
 tokenInput.addEventListener("input", () => {

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Charm</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="grid-bg">
+    <div class="sidebar">
+        <h2>Charm</h2>
+
+        <div id="main-view">
+            <div class="input-field">
+                <label for="date-input">START DATE</label>
+                <input id="date-input" type="date">
+            </div>
+
+            <div class="input-field">
+                <label for="token-input">HACKATIME TOKEN</label>
+                <input autocomplete="off" autocorrect="off" type="text" id="token-input">
+            </div>
+
+            <div id="project-select">
+                <div class="project-entry" project="my cool project"><span>my cool project</span><span
+                        class="hour-count">44</span></div>
+                <div class="project-entry" project="rad-game"><span>rad-game</span><span class="hour-count">21</span>
+                </div>
+                <div class="project-entry" project="agentic-calculator-saas"><span>agentic-calculator-saas</span><span
+                        class="hour-count">5</span></div>
+            </div>
+            <button>Load</button>
+            <button class="view-btn" onclick="inspectProjects();">View</button>
+        </div>
+        <div id="project-view">
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>

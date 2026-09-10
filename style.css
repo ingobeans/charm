@@ -1,0 +1,129 @@
+body {
+    --bg: #121314;
+    --darker-bg: #0a0a0b;
+    --border-color: rgb(41, 42, 46);
+    --table-bg: #121314;
+    background-color: var(--bg);
+    color: white;
+    font-family: "Verdana";
+    --grid-border-color: #5656563e;
+    margin: 0;
+}
+
+label {
+    display: block;
+    font-size: small;
+    margin-bottom: 5px;
+}
+
+.input-field {
+    margin-bottom: 15px;
+}
+
+#project-select {
+    border: 1px solid var(--border-color);
+    width: fit-content;
+    height: 220px;
+    overflow: scroll;
+    margin-top: 20px;
+    width: 100%;
+}
+
+#project-select>div {
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    line-break: anywhere;
+    font-size: smaller;
+}
+
+.sidebar {
+    width: fit-content;
+    height: 100vh;
+    background-color: var(--bg);
+    padding: 1px 15px;
+    border-right: 1px solid var(--border-color);
+    min-width: 300px;
+}
+
+.view-btn {
+    margin-top: 20px;
+}
+
+.hour-count {
+    float: right;
+    margin-right: 15px;
+}
+
+.selected-project {
+    background-color: var(--border-color);
+}
+
+input,
+button {
+    border: 1px solid var(--border-color);
+    background-color: var(--bg);
+    color: inherit;
+    font: inherit;
+    padding: 8px;
+}
+
+button:hover {
+    filter: brightness(1.5);
+}
+
+input:focus {
+    outline: none;
+}
+
+.fill {
+    width: 100%;
+    height: 100%;
+}
+
+.grid-bg {
+    background-size: 60px 60px;
+    background-image:
+        linear-gradient(to right, var(--grid-border-color) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-border-color) 1px, transparent 1px);
+}
+
+.no-drag {
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.centered-contents {
+    width: 100%;
+    max-width: 900px;
+    display: block;
+    margin: 0 auto;
+}
+
+.content-container {
+    border: 1px solid var(--border-color);
+    background-color: var(--darker-bg);
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th {
+    border: solid 1px var(--border-color);
+    padding: 8px;
+    font-size: 12px;
+}
+
+.table-header {
+    background-color: var(--table-bg);
+    position: sticky;
+    top: 0;
+}
+
+.table-header>th {
+    color: white !important;
+}

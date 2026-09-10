@@ -68,8 +68,18 @@ button {
     padding: 8px;
 }
 
+button {
+    cursor: pointer;
+}
+
 button:hover {
     filter: brightness(1.5);
+}
+
+button:disabled {
+    filter: brightness(1.0) !important;
+    color: gray;
+    cursor: not-allowed;
 }
 
 input:focus {

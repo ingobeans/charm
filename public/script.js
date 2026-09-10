@@ -7,12 +7,31 @@ let tokenInputError = gd("token-input-error");
 let startDateInput = gd("start-date-input");
 let endDateInput = gd("end-date-input");
 let projectSelectContainer = gd("project-select");
+let viewBtn = gd("view-btn");
+
+function count(query) {
+    let i = 0;
+    for (let _ of query) {
+        i++;
+    }
+    return i;
+}
 
 function clickProject(element) {
     if (element.classList.contains("selected-project")) {
         element.classList.remove("selected-project");
     } else {
         element.classList.add("selected-project");
+    }
+    let amt = count(document.querySelectorAll(".selected-project"));
+    if (amt > 0) {
+        if (viewBtn.hasAttribute("disabled")) {
+            viewBtn.removeAttribute("disabled");
+        }
+    } else {
+        if (!viewBtn.hasAttribute("disabled")) {
+            viewBtn.setAttribute("disabled", "");
+        }
     }
 }
 

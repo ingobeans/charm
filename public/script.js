@@ -12,6 +12,7 @@ let viewBtn = gd("view-btn");
 let authorName = gd("author-name");
 let authorPfp = gd("author-pfp");
 let authorSlackId = gd("author-slackid");
+let authorGithub = gd("author-github");
 let authorContainer = gd("author-container");
 
 function count(query) {
@@ -89,6 +90,9 @@ function fetchProjects() {
             }
             authorContainer.style.display = "";
             authorSlackId.innerText = data["slack_id"] || "";
+            authorGithub.innerText = data["github_username"] || "";
+            authorGithub.href = (data["github_username"]) ? ("https://github.com/" + data["github_username"]) : "";
+            authorGithub.style.visibility = (data["github_username"]) ? "visible" : "hidden";
             authorPfp.src = data["pfp"] || "/placeholder.png";
             if (data["username"]) {
                 authorName.innerText = data["username"];

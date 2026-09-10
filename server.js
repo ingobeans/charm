@@ -51,6 +51,7 @@ app.get("/projects", async (req, res) => {
     if (r.ok) {
         let userData = await r.json();
         data["slack_id"] = userData["slack_id"];
+        data["github_username"] = userData["github_username"];
     }
 
     res.send(data);

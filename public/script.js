@@ -4,6 +4,9 @@ let errorSvg = `<svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox
 
 let tokenInput = gd("token-input");
 let tokenInputError = gd("token-input-error");
+let startDateInput = gd("start-date-input");
+let endDateInput = gd("end-date-input");
+let projectSelectContainer = gd("project-select");
 
 tokenInput.addEventListener("input", () => {
     let value = tokenInput.value;
@@ -15,4 +18,27 @@ tokenInput.addEventListener("input", () => {
         return;
     }
     tokenInputError.innerHTML = "";
+    fetch(`/projects?token=${tokenInput.value}&start=${startDateInput.value}&end=${endDateInput.value}`).then((res) => {
+        res.text().then((value => {
+            console.log(value);
+            let data = JSON.parse(value);
+            if (data["error"]) {
+                projectSelectContainer.innerHTML = `<p class="error">${errorSvg}Error fetching Hackatime projects: ${data["error"]}.</p>`;
+                return;
+            }
+            projectSelectContainer.innerHTML = "";
+            for (let project of data["projects"]) {
+                let entry = document.createElement("div");
+                entry.setAttribute("project", project.name);
+                let name = document.createElement("span");
+                let hours = document.createElement("span");
+                hours.className = "hour-count";
+                name.innerText = project.name;
+                hours.innerText = (project.total_seconds / 60 / 60).toFixed(1);
+                entry.appendChild(name);
+                entry.appendChild(hours);
+                projectSelectContainer.appendChild(entry);
+            }
+        }))
+    })
 });

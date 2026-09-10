@@ -25,7 +25,8 @@ label {
     margin-bottom: 15px;
 }
 
-.input-field>p {
+.input-field>p,
+.error {
     color: red;
     font-size: smaller;
 }
@@ -44,7 +45,6 @@ label {
     width: fit-content;
     height: 220px;
     overflow: scroll;
-    margin-top: 20px;
     width: 100%;
 }
 
@@ -57,12 +57,11 @@ label {
 }
 
 .sidebar {
-    width: fit-content;
     height: 100vh;
     background-color: var(--bg);
     padding: 0 15px;
     border-right: 1px solid var(--border-color);
-    min-width: 300px;
+    width: 300px;
 }
 
 .sidebar>h2 {

@@ -92,7 +92,8 @@ button {
     font-size: smaller;
 }
 
-input[type=text] {
+input[type=text],
+input[type=url] {
     width: calc(100% - 2 * 8px);
 }
 

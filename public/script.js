@@ -9,6 +9,10 @@ let startDateInputError = gd("start-date-input-error");
 let endDateInput = gd("end-date-input");
 let projectSelectContainer = gd("project-select");
 let viewBtn = gd("view-btn");
+let authorName = gd("author-name");
+let authorPfp = gd("author-pfp");
+let authorSlackId = gd("author-slackid");
+let authorContainer = gd("author-container");
 
 function count(query) {
     let i = 0;
@@ -63,8 +67,8 @@ function fetchProjects() {
     tokenInputError.innerHTML = "";
     fetch(`/projects?token=${tokenInput.value}&start=${startDateInput.value}&end=${endDateInput.value}`).then((res) => {
         res.text().then((value => {
-            console.log(value);
             let data = JSON.parse(value);
+            console.log(data);
             if (data["error"]) {
                 projectSelectContainer.innerHTML = `<p class="error">${errorSvg}Error fetching Hackatime projects: ${data["error"]}.</p>`;
                 return;
@@ -83,6 +87,10 @@ function fetchProjects() {
                 entry.onclick = clickProject.bind(null, entry);
                 projectSelectContainer.appendChild(entry);
             }
+            authorContainer.style.display = "";
+            authorSlackId.innerText = data["slack_id"] || "";
+            authorName.innerText = data["username"] || "<unknown>";
+            authorPfp.src = data["pfp"] || "/placeholder.png";
         }))
     });
 }

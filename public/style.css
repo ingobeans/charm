@@ -5,10 +5,11 @@ body {
     --table-bg: #121314;
     --text-color: white;
     --muted-text-color: gray;
-    background-color: var(--bg);
+    background-color: var(--darker-bg);
     color: var(--text-color);
     font-family: "Verdana";
     --grid-border-color: #5656563e;
+    --sidebar-width: 300px;
     margin: 0;
 }
 
@@ -17,6 +18,33 @@ label {
     font-size: 12px;
     margin-bottom: 5px;
     color: var(--muted-text-color);
+}
+
+.flex-row {
+    display: flex;
+}
+
+.main-container {
+    display: flex;
+}
+
+.inspect-container {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+}
+
+.inspect-section {
+    background-color: var(--bg);
+    border: solid 1px var(--border-color);
+    width: fit-content;
+    padding: 5px;
+}
+
+.pfp {
+    width: 64px;
+    border-radius: 10px;
+    margin-right: 5px;
 }
 
 .input-field-row {

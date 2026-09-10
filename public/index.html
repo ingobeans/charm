@@ -8,39 +8,54 @@
 </head>
 
 <body class="grid-bg">
-    <div class="sidebar">
-        <h2>Charm</h2>
+    <div class="main-container">
+        <div class="sidebar">
+            <h2>Charm</h2>
 
-        <div id="main-view">
-            <div class="input-field-row">
+            <div id="main-view">
+                <div class="input-field-row">
+                    <div class="input-field">
+                        <label for="start-date-input">START DATE*</label>
+                        <input id="start-date-input" type="date">
+                        <p id="start-date-input-error"></p>
+                    </div>
+                    <div class="input-field">
+                        <label for="end-date-input">END DATE</label>
+                        <input id="end-date-input" type="date">
+                    </div>
+                </div>
+
                 <div class="input-field">
-                    <label for="start-date-input">START DATE*</label>
-                    <input id="start-date-input" type="date">
-                    <p id="start-date-input-error"></p>
+                    <label for="repo-input">GITHUB REPOSITORY</label>
+                    <input autocomplete="off" autocorrect="off" type="url" id="repo-input">
+                    <p id="repo-input-error"></p>
                 </div>
                 <div class="input-field">
-                    <label for="end-date-input">END DATE</label>
-                    <input id="end-date-input" type="date">
+                    <label for="token-input">HACKATIME TOKEN*</label>
+                    <input autocomplete="off" autocorrect="off" type="text" id="token-input">
+                    <p id="token-input-error"></p>
                 </div>
-            </div>
 
-            <div class="input-field">
-                <label for="repo-input">GITHUB REPOSITORY</label>
-                <input autocomplete="off" autocorrect="off" type="url" id="repo-input">
-                <p id="repo-input-error"></p>
+                <label>SELECT HACKATIME PROJECTS</label>
+                <div id="project-select">
+                </div>
+                <button id="view-btn" onclick="inspectProjects();" disabled>View</button>
             </div>
-            <div class="input-field">
-                <label for="token-input">HACKATIME TOKEN*</label>
-                <input autocomplete="off" autocorrect="off" type="text" id="token-input">
-                <p id="token-input-error"></p>
+            <div id="project-view">
             </div>
-
-            <label>SELECT HACKATIME PROJECTS</label>
-            <div id="project-select">
-            </div>
-            <button id="view-btn" onclick="inspectProjects();" disabled>View</button>
         </div>
-        <div id="project-view">
+        <div class="inspect-container">
+            <div class="inspect-section" id="author-container" style="display: none;">
+                <label>AUTHOR</label>
+                <hr>
+                <div class="flex-row">
+                    <img src="" id="author-pfp" class="pfp">
+                    <div>
+                        <span id="author-name"></span>
+                        <label id="author-slackid"></label>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

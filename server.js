@@ -7,14 +7,14 @@ app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 
-let allowedFiles = ["style.css", "script.js"];
+let allowedFiles = ["style.css", "script.js", "placeholder.png"];
 for (let file of allowedFiles) {
     app.get('/' + file, function (req, res) {
         res.sendFile(path.join(__dirname + '/public/' + file));
     });
 }
 
-app.get("/projects", function (req, res) {
+app.get("/projects", async (req, res) => {
     let allowedDateChars = "0123456789-";
 
     let start = req.query["start"];
@@ -34,17 +34,26 @@ app.get("/projects", function (req, res) {
             }
         }
     }
-    url = `https://hackatime.hackclub.com/api/v1/authenticated/projects?start_date=${req.query["start"]}&end_date=${req.query["end"]}`
-    fetch(url, {
+    let reqData = {
         credentials: "include",
         headers: {
             "Authorization": "Bearer " + req.query["token"],
         }
-    }).then((r) => {
-        r.text().then((data) => {
-            res.send(data);
-        })
-    })
+    };
+
+    url = `https://hackatime.hackclub.com/api/v1/authenticated/projects?start_date=${req.query["start"]}&end_date=${req.query["end"]}`
+
+    let r = await fetch(url, reqData);
+    let data = await r.json();
+
+    // also try fetch user info
+    r = await fetch("https://hackatime.hackclub.com/api/v1/authenticated/me", data);
+    if (r.ok) {
+        let userData = await r.json();
+        data["slack_id"] = userData["slack_id"];
+    }
+
+    res.send(data);
 });
 
 app.listen(port, () => {

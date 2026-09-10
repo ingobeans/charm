@@ -8,6 +8,14 @@ let startDateInput = gd("start-date-input");
 let endDateInput = gd("end-date-input");
 let projectSelectContainer = gd("project-select");
 
+function clickProject(element) {
+    if (element.classList.contains("selected-project")) {
+        element.classList.remove("selected-project");
+    } else {
+        element.classList.add("selected-project");
+    }
+}
+
 tokenInput.addEventListener("input", () => {
     let value = tokenInput.value;
     if (value == "") {
@@ -37,6 +45,7 @@ tokenInput.addEventListener("input", () => {
                 hours.innerText = (project.total_seconds / 60 / 60).toFixed(1);
                 entry.appendChild(name);
                 entry.appendChild(hours);
+                entry.onclick = clickProject.bind(null, entry);
                 projectSelectContainer.appendChild(entry);
             }
         }))

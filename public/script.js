@@ -54,6 +54,33 @@ for (let input of document.querySelectorAll("input")) {
     input.addEventListener("input", inputChange);
 }
 
+function fetchAuthorData() {
+    let value = tokenInput.value;
+    if (value == "") {
+        authorContainer.style.display = "none";
+        return;
+    } else if (value.length != 43) {
+        authorContainer.style.display = "none";
+        return;
+    }
+    fetch(`/user?token=${tokenInput.value}`).then((res) => {
+        res.text().then((value => {
+            let data = JSON.parse(value);
+            authorContainer.style.display = "";
+            authorSlackId.innerText = data["slack_id"] || "";
+            authorGithub.innerText = data["github_username"] || "";
+            authorGithub.href = (data["github_username"]) ? ("https://github.com/" + data["github_username"]) : "";
+            authorGithub.style.visibility = (data["github_username"]) ? "visible" : "hidden";
+            authorPfp.src = data["pfp"] || "/placeholder.png";
+            if (data["username"]) {
+                authorName.innerText = data["username"];
+            } else {
+                authorName.innerHTML = "[unknown]<div class='info-mark'>?<div>The OAuth App that issued the selected token doesn't have the profile scope</div></div>";
+            }
+        }))
+    });
+}
+
 function fetchProjects() {
     let value = tokenInput.value;
     if (value == "") {
@@ -88,21 +115,10 @@ function fetchProjects() {
                 entry.onclick = clickProject.bind(null, entry);
                 projectSelectContainer.appendChild(entry);
             }
-            authorContainer.style.display = "";
-            authorSlackId.innerText = data["slack_id"] || "";
-            authorGithub.innerText = data["github_username"] || "";
-            authorGithub.href = (data["github_username"]) ? ("https://github.com/" + data["github_username"]) : "";
-            authorGithub.style.visibility = (data["github_username"]) ? "visible" : "hidden";
-            authorPfp.src = data["pfp"] || "/placeholder.png";
-            if (data["username"]) {
-                authorName.innerText = data["username"];
-            } else {
-                authorName.innerHTML = "[unknown]<div class='info-mark'>?<div>The OAuth App that issued the selected token doesn't have the profile scope</div></div>";
-            }
         }))
     });
 }
 
-tokenInput.addEventListener("input", fetchProjects);
 startDateInput.addEventListener("input", fetchProjects);
 endDateInput.addEventListener("input", fetchProjects);
+tokenInput.addEventListener("input", () => { fetchProjects(); fetchAuthorData(); });

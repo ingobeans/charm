@@ -14,6 +14,33 @@ for (let file of allowedFiles) {
     });
 }
 
+
+app.get("/user", async (req, res) => {
+    let reqData = {
+        credentials: "include",
+        headers: {
+            "Authorization": "Bearer " + req.query["token"],
+        }
+    };
+    data = {}
+
+    // also try fetch user info
+    r = await fetch("https://hackatime.hackclub.com/api/v1/authenticated/me", reqData);
+    if (r.ok) {
+        let userData = await r.json();
+        data["slack_id"] = userData["slack_id"];
+        data["github_username"] = userData["github_username"];
+        if (data["slack_id"]) {
+            let r = await fetch("https://cachet.dunkirk.sh/users/" + data["slack_id"]);
+            if (r.ok) {
+                let slackData = await r.json();
+                data["username"] = slackData["displayName"];
+                data["pfp"] = slackData["imageUrl"];
+            }
+        }
+    }
+    res.send(data);
+});
 app.get("/projects", async (req, res) => {
     let allowedDateChars = "0123456789-";
 
@@ -45,23 +72,6 @@ app.get("/projects", async (req, res) => {
 
     let r = await fetch(url, reqData);
     let data = await r.json();
-
-    // also try fetch user info
-    r = await fetch("https://hackatime.hackclub.com/api/v1/authenticated/me", reqData);
-    if (r.ok) {
-        let userData = await r.json();
-        data["slack_id"] = userData["slack_id"];
-        data["github_username"] = userData["github_username"];
-        if (data["slack_id"]) {
-            let r = await fetch("https://cachet.dunkirk.sh/users/" + data["slack_id"]);
-            if (r.ok) {
-                let slackData = await r.json();
-                data["username"] = slackData["displayName"];
-                data["pfp"] = slackData["imageUrl"];
-            }
-        }
-    }
-
     res.send(data);
 });
 

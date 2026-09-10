@@ -55,9 +55,14 @@ label {
     width: fit-content;
     height: 100vh;
     background-color: var(--bg);
-    padding: 1px 15px;
+    padding: 0 15px;
     border-right: 1px solid var(--border-color);
     min-width: 300px;
+}
+
+.sidebar>h2 {
+    margin-top: 0;
+    padding-top: 15px;
 }
 
 .view-btn {

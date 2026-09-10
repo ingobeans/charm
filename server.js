@@ -52,6 +52,14 @@ app.get("/projects", async (req, res) => {
         let userData = await r.json();
         data["slack_id"] = userData["slack_id"];
         data["github_username"] = userData["github_username"];
+        if (data["slack_id"]) {
+            let r = await fetch("https://cachet.dunkirk.sh/users/" + data["slack_id"]);
+            if (r.ok) {
+                let slackData = await r.json();
+                data["username"] = slackData["displayName"];
+                data["pfp"] = slackData["imageUrl"];
+            }
+        }
     }
 
     res.send(data);

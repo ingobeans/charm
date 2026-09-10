@@ -47,7 +47,7 @@ app.get("/projects", async (req, res) => {
     let data = await r.json();
 
     // also try fetch user info
-    r = await fetch("https://hackatime.hackclub.com/api/v1/authenticated/me", data);
+    r = await fetch("https://hackatime.hackclub.com/api/v1/authenticated/me", reqData);
     if (r.ok) {
         let userData = await r.json();
         data["slack_id"] = userData["slack_id"];

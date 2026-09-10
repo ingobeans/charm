@@ -17,7 +17,6 @@ for (let file of allowedFiles) {
 app.get("/projects", function (req, res) {
     let allowedDateChars = "0123456789-";
 
-    console.log(req.query);
     let start = req.query["start"];
     if (start == undefined || start.length == 0) {
         res.send({ error: `Missing start date` });

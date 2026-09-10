@@ -93,6 +93,10 @@ button {
     font-size: smaller;
 }
 
+input[type=text] {
+    width: calc(100% - 2 * 8px);
+}
+
 button {
     cursor: pointer;
 }

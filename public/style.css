@@ -3,8 +3,10 @@ body {
     --darker-bg: #0a0a0b;
     --border-color: rgb(41, 42, 46);
     --table-bg: #121314;
+    --text-color: white;
+    --muted-text-color: gray;
     background-color: var(--bg);
-    color: white;
+    color: var(--text-color);
     font-family: "Verdana";
     --grid-border-color: #5656563e;
     margin: 0;
@@ -14,6 +16,7 @@ label {
     display: block;
     font-size: 12px;
     margin-bottom: 5px;
+    color: var(--muted-text-color);
 }
 
 .input-field-row {
@@ -107,7 +110,7 @@ button:hover {
 
 button:disabled {
     filter: brightness(1.0) !important;
-    color: gray;
+    color: var(--muted-text-color);
     cursor: not-allowed;
 }
 
@@ -164,5 +167,5 @@ th {
 }
 
 .table-header>th {
-    color: white !important;
+    color: var(--text-color) !important;
 }

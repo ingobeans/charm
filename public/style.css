@@ -82,6 +82,18 @@ label,
     overflow: scroll;
 }
 
+#graph-y-labels {
+    height: 0;
+    position: relative;
+}
+
+#graph-y-labels>label {
+    position: absolute;
+    right: 10px;
+}
+
+/* #graph-section {} */
+
 .info-mark {
     display: inline;
     position: relative;

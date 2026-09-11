@@ -1,4 +1,5 @@
-let graphContainer = gd("graph-container");
+let graphSection = gd("graph-section");
+let graphYLabels = gd("graph-y-labels");
 let graphCanvas = gd("graph-canvas");
 let ctx = graphCanvas.getContext("2d");
 
@@ -48,7 +49,7 @@ function countHeartbeatTimes(heartbeats, projects) {
         }
     }
 
-    graphContainer.style.display = "";
+    graphSection.style.display = "";
 
     let horizontalScale = 1.0;
     let verticalScale = 0.5;
@@ -110,9 +111,13 @@ function countHeartbeatTimes(heartbeats, projects) {
     let verticalUnitSteps = 5;
 
     let verticalUnitSize = highest / (verticalUnitSteps);
+    graphYLabels.innerHTML = "";
     for (let i = 0; i <= verticalUnitSteps; i++) {
         let v = verticalUnitSize * i;
-        ctx.fillText((v / 60).toFixed(1), canvasWidth - 40, canvasHeight - v * verticalScale - yOffset + 9);
+        let element = document.createElement("label");
+        element.innerText = (v / 60).toFixed(1);
+        element.style.top = (canvasHeight - v * verticalScale - yOffset) + "px";
+        graphYLabels.appendChild(element);
     }
 }
 // countHeartbeatTimes(cached.heartbeats, [cached.heartbeats[0].project]);

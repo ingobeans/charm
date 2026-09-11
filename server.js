@@ -1,10 +1,43 @@
 const express = require('express');
 var path = require('path');
+try {
+    require("./config.js");
+} catch {
+    oauthUid = undefined;
+}
+
+root = "";
+
 const app = express();
 const port = 8080;
 
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/public');
+
 app.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname + '/public/index.html'));
+    root = req.protocol + '://' + req.get('host') + req.originalUrl;
+    res.render("index")
+});
+
+app.get('/callback', async (req, res) => {
+    root = req.protocol + '://' + req.get('host') + req.originalUrl;
+    let code = req.query["code"];
+    console.log(code);
+    let r = await fetch("https://hackatime.hackclub.com/oauth/token", {
+        method: "POST",
+        body: new URLSearchParams({
+            client_id: oauthUid,
+            client_secret: oauthSecret,
+            code: code,
+            redirect_uri: root + "callback",
+            grant_type: "authorization_code",
+        })
+    });
+    let data = await r.json();
+    let token = data["access_token"];
+    res.cookie('token', token);
+    console.log(data);
+    res.redirect("/")
 });
 
 let allowedFiles = ["style.css", "script.js", "placeholder.png"];
@@ -13,7 +46,6 @@ for (let file of allowedFiles) {
         res.sendFile(path.join(__dirname + '/public/' + file));
     });
 }
-
 
 app.get("/user", async (req, res) => {
     let reqData = {

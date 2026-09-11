@@ -89,6 +89,7 @@ label,
 
 .input-field {
     margin-bottom: 15px;
+    width: 100%;
 }
 
 .input-field>p,
@@ -150,13 +151,19 @@ label,
 }
 
 input,
-button {
+button,
+.link-btn {
     border: 1px solid var(--border-color);
     background-color: var(--bg);
     color: inherit;
     font: inherit;
     padding: 8px;
     font-size: smaller;
+}
+
+.link-btn,
+.link-btn:hover {
+    text-decoration: none;
 }
 
 input[type=text],
@@ -168,7 +175,8 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+button:hover,
+.link-btn:hover {
     filter: brightness(1.5);
 }
 

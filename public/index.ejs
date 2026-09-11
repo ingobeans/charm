@@ -30,12 +30,21 @@
                     <input autocomplete="off" autocorrect="off" type="url" id="repo-input">
                     <p id="repo-input-error"></p>
                 </div>
-                <div class="input-field">
-                    <label for="token-input">HACKATIME TOKEN*</label>
-                    <input autocomplete="off" autocorrect="off" type="text" id="token-input">
-                    <p id="token-input-error"></p>
-                </div>
 
+                <div class="input-field-row">
+                    <div class="input-field">
+                        <label for="token-input">HACKATIME TOKEN*</label>
+                        <input autocomplete="off" autocorrect="off" type="text" id="token-input">
+                        <p id="token-input-error"></p>
+                    </div>
+
+                    <% if (oauthUid) { %>
+                        <a class="link-btn" id="oauth-button" style="margin: 20px 0 28px 0; width:90px"
+                            href="https://hackatime.hackclub.com/oauth/authorize?client_id=<%= oauthUid %>&redirect_uri=<%= root %>callback&response_type=code&scope=profile+read">
+                            Self Auth
+                        </a>
+                        <% } %>
+                </div>
                 <label>SELECT HACKATIME PROJECTS</label>
                 <div id="project-select">
                 </div>

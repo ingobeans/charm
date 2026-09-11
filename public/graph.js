@@ -1,6 +1,6 @@
 let graphContainer = gd("graph-container");
 
-function countHeartbeatTimes(heartbeats,projects) {
+function countHeartbeatTimes(heartbeats, projects) {
     let datapoints = [];
     let dates = {};
     let registeredTimes = {};
@@ -13,10 +13,10 @@ function countHeartbeatTimes(heartbeats,projects) {
         if (!firstTime || firstTime > heartbeat.time) {
             firstTime = heartbeat.time;
         }
-        let date = new Date(heartbeat.time*1000);
+        let date = new Date(heartbeat.time * 1000);
         date.setMilliseconds(0);
         date.setSeconds(0);
-        date.setMinutes(Math.floor(date.getMinutes()/minutesTrack)*minutesTrack);
+        date.setMinutes(Math.floor(date.getMinutes() / minutesTrack) * minutesTrack);
         if (!registeredTimes[date.valueOf()]) {
             registeredTimes[date.valueOf()] = true;
         } else {
@@ -27,5 +27,6 @@ function countHeartbeatTimes(heartbeats,projects) {
         date.setHours(0);
         dates[date.valueOf()] = (dates[date.valueOf()] || 0) + minutesTrack;
     }
+    console.log(dates);
 }
-// countHeartbeatTimes(cached.heartbeats,[cached.heartbeats[0].project]);
+// countHeartbeatTimes(cached.heartbeats, [cached.heartbeats[0].project]);

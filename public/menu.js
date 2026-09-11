@@ -102,7 +102,7 @@ function viewProjects() {
     fetch(`/data?token=${tokenInput.value}&start=${startDateInput.value}&end=${endDateInput.value}`).then((res) => {
         res.text().then((value => {
             let data = JSON.parse(value);
-            console.log(data);
+            countHeartbeatTimes(data.heartbeats, projects);
         }))
     });
 }

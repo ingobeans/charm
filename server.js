@@ -1,5 +1,7 @@
 const express = require('express');
+var fs = require('fs');
 var path = require('path');
+
 try {
     require("./config.js");
 } catch {
@@ -39,9 +41,11 @@ app.get('/callback', async (req, res) => {
     console.log(data);
     res.redirect("/?a=1")
 });
-
-let allowedFiles = ["style.css", "script.js", "placeholder.png"];
+let allowedFiles = fs.readdirSync('./public');
 for (let file of allowedFiles) {
+    if (file.endsWith(".ejs")) {
+        continue;
+    }
     app.get('/' + file, function (req, res) {
         res.sendFile(path.join(__dirname + '/public/' + file));
     });

@@ -74,6 +74,12 @@ label,
     border: solid 1px var(--border-color);
     width: fit-content;
     padding: 5px;
+    margin-bottom: 15px;
+}
+
+#graph-container {
+    max-width: 800px;
+    overflow: scroll;
 }
 
 .info-mark {

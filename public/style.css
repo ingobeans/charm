@@ -218,7 +218,7 @@ button {
 
 button:hover,
 .link-btn:hover {
-    filter: brightness(1.5);
+    filter: invert(0.2) contrast(1.2);
 }
 
 button:disabled {

@@ -40,14 +40,13 @@ function countHeartbeatTimes(heartbeats, projects) {
         }
     }
 
-    console.log(dates);
     graphContainer.style.display = "";
 
     let horizontalScale = 1.0;
     let verticalScale = 0.5;
 
     let canvasHeight = (highest * verticalScale) + 40;
-    let yOffset = 40;
+    let yOffset = 35;
     graphCanvas.height = canvasHeight;
 
     function getDateX(date) {
@@ -102,7 +101,7 @@ function countHeartbeatTimes(heartbeats, projects) {
     for (let i = 0; i <= verticalUnitSteps; i++) {
         let v = verticalUnitSize * i;
         console.log(v / 60);
-        ctx.fillText((v / 60).toFixed(1), canvasWidth - 40, canvasHeight - v * verticalScale - yOffset);
+        ctx.fillText((v / 60).toFixed(1), canvasWidth - 40, canvasHeight - v * verticalScale - yOffset + 9);
     }
 }
 countHeartbeatTimes(cached.heartbeats, [cached.heartbeats[0].project]);

@@ -80,6 +80,7 @@ label,
 #graph-container {
     max-width: 800px;
     overflow: scroll;
+    padding-bottom: 15px;
 }
 
 #graph-y-labels {

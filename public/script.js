@@ -14,6 +14,7 @@ let authorPfp = gd("author-pfp");
 let authorSlackId = gd("author-slackid");
 let authorGithub = gd("author-github");
 let authorContainer = gd("author-container");
+let oauthButton = gd("oauth-button");
 
 function count(query) {
     let i = 0;
@@ -21,6 +22,17 @@ function count(query) {
         i++;
     }
     return i;
+}
+
+async function oauthButtonClick() {
+    let token = await cookieStore.get("token");
+    if (token) {
+        tokenInput.value = token.value;
+        fetchProjects();
+        fetchAuthorData();
+    } else {
+        window.location.href = oauthButton.getAttribute("href");
+    }
 }
 
 function clickProject(element) {
@@ -87,9 +99,11 @@ function fetchProjects() {
         tokenInputError.innerHTML = "";
         return;
     } else if (value.length != 43) {
+        console.log(value.length);
         tokenInputError.innerHTML = errorSvg + "Invalid Hackatime token.";
         return;
     } else if (!startDateInput.value) {
+        tokenInputError.innerHTML = "";
         return;
     }
     tokenInputError.innerHTML = "";
@@ -122,3 +136,12 @@ function fetchProjects() {
 startDateInput.addEventListener("input", fetchProjects);
 endDateInput.addEventListener("input", fetchProjects);
 tokenInput.addEventListener("input", () => { fetchProjects(); fetchAuthorData(); });
+
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('a') == "1") {
+    cookieStore.get("token").then((v) => {
+        if (v) {
+            oauthButtonClick();
+        }
+    })
+}

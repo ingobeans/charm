@@ -37,7 +37,7 @@ app.get('/callback', async (req, res) => {
     let token = data["access_token"];
     res.cookie('token', token);
     console.log(data);
-    res.redirect("/")
+    res.redirect("/?a=1")
 });
 
 let allowedFiles = ["style.css", "script.js", "placeholder.png"];

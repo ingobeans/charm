@@ -39,10 +39,10 @@
                     </div>
 
                     <% if (oauthUid) { %>
-                        <a class="link-btn" id="oauth-button" style="margin: 20px 0 28px 0; width:90px"
+                        <button id="oauth-button" onclick="oauthButtonClick();"
                             href="https://hackatime.hackclub.com/oauth/authorize?client_id=<%= oauthUid %>&redirect_uri=<%= root %>callback&response_type=code&scope=profile+read">
                             Self Auth
-                        </a>
+                        </button>
                         <% } %>
                 </div>
                 <label>SELECT HACKATIME PROJECTS</label>

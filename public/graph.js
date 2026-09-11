@@ -54,6 +54,10 @@ function countHeartbeatTimes(heartbeats, projects) {
     let verticalScale = 0.5;
 
     let canvasHeight = (highest * verticalScale) + 40;
+    if (canvasHeight < 140) {
+        verticalScale = (140 - 40) / highest;
+        canvasHeight = 140;
+    }
     let yOffset = 35;
     graphCanvas.height = canvasHeight;
 

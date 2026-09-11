@@ -41,6 +41,7 @@ app.get('/callback', async (req, res) => {
     console.log(data);
     res.redirect("/?a=1")
 });
+
 let allowedFiles = fs.readdirSync('./public');
 for (let file of allowedFiles) {
     if (file.endsWith(".ejs")) {
@@ -77,13 +78,13 @@ app.get("/user", async (req, res) => {
     }
     res.send(data);
 });
-app.get("/projects", async (req, res) => {
+
+function validateDates(req) {
     let allowedDateChars = "0123456789-";
 
     let start = req.query["start"];
     if (start == undefined || start.length == 0) {
-        res.send({ error: `Missing start date` });
-        return;
+        return `Missing start date`;
     }
 
     for (let field of ["start", "end"]) {
@@ -92,10 +93,35 @@ app.get("/projects", async (req, res) => {
         }
         for (let char of req.query[field]) {
             if (!allowedDateChars.includes(char)) {
-                res.send({ error: `Bad ${field} date` });
-                return;
+                return `Bad ${field} date`;
             }
         }
+    }
+}
+
+app.get("/data", async (req, res) => {
+    let datesError = validateDates(req);
+    if (datesError) {
+        res.send({ error: datesError });
+    }
+    let reqData = {
+        credentials: "include",
+        headers: {
+            "Authorization": "Bearer " + req.query["token"],
+        }
+    };
+
+    url = `https://hackatime.hackclub.com/api/v1/my/heartbeats?start_time=${req.query["start"]}&end_time=${req.query["end"]}`;
+
+    let r = await fetch(url, reqData);
+    let data = await r.json();
+    res.send(data);
+});
+
+app.get("/projects", async (req, res) => {
+    let datesError = validateDates(req);
+    if (datesError) {
+        res.send({ error: datesError });
     }
     let reqData = {
         credentials: "include",

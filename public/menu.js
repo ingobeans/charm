@@ -93,6 +93,20 @@ function fetchAuthorData() {
     });
 }
 
+function viewProjects() {
+    let projects = [];
+    for (let element of document.querySelectorAll(".selected-project")) {
+        projects.push(element.getAttribute("project"));
+    }
+
+    fetch(`/data?token=${tokenInput.value}&start=${startDateInput.value}&end=${endDateInput.value}`).then((res) => {
+        res.text().then((value => {
+            let data = JSON.parse(value);
+            console.log(data);
+        }))
+    });
+}
+
 function fetchProjects() {
     let value = tokenInput.value;
     if (value == "") {

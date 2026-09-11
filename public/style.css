@@ -1,16 +1,32 @@
-body {
+html {
     --bg: #121314;
     --darker-bg: #0a0a0b;
     --border-color: rgb(41, 42, 46);
     --table-bg: #121314;
     --text-color: white;
     --muted-text-color: gray;
+    --grid-border-color: #5656563e;
+}
+
+.light-root {
+    --bg: #fff;
+    --darker-bg: #f2f2f2;
+    --text-color: black;
+}
+
+body {
     background-color: var(--darker-bg);
     color: var(--text-color);
     font-family: "Verdana";
-    --grid-border-color: #5656563e;
     --sidebar-width: 300px;
     margin: 0;
+}
+
+#darkmode-switch {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 2px;
 }
 
 a {

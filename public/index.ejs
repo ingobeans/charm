@@ -5,9 +5,16 @@
     <meta charset="UTF-8" />
     <title>Charm</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        light = localStorage.getItem("light") == "true";
+        if (light) {
+            document.documentElement.classList.add('light-root')
+        }
+    </script>
 </head>
 
 <body class="grid-bg">
+    <button id="darkmode-switch">X</button>
     <div class="main-container">
         <div class="sidebar">
             <h2>Charm</h2>

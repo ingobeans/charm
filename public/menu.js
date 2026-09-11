@@ -159,3 +159,14 @@ if (urlParams.get('a') == "1") {
         }
     })
 }
+
+let darkmodeButton = document.getElementById("darkmode-switch");
+darkmodeButton.addEventListener("click", (event) => {
+    light = !light;
+    localStorage.setItem("light", light.toString());
+    if (light) {
+        document.documentElement.classList.add('light-root')
+    } else {
+        document.documentElement.classList.remove('light-root')
+    }
+})

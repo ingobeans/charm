@@ -105,7 +105,7 @@ function countHeartbeatTimes(heartbeats, projects) {
     iterateDates((date, value) => {
         let x = getDateX(date - firstTime) * horizontalScale + xOffset;
         let dateObj = new Date(date * 24 * 60 * 60 * 1000);
-        ctx.fillText(dateObj.getDate() + "/" + dateObj.getMonth(), x, canvasHeight);
+        ctx.fillText(dateObj.getDate() + "/" + (dateObj.getMonth() + 1), x, canvasHeight);
     });
 
     let verticalUnitSteps = 5;

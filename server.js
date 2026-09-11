@@ -24,7 +24,6 @@ app.get('/', function (req, res) {
 app.get('/callback', async (req, res) => {
     root = req.protocol + '://' + req.get('host') + req.originalUrl;
     let code = req.query["code"];
-    console.log(code);
     let r = await fetch("https://hackatime.hackclub.com/oauth/token", {
         method: "POST",
         body: new URLSearchParams({
@@ -38,7 +37,6 @@ app.get('/callback', async (req, res) => {
     let data = await r.json();
     let token = data["access_token"];
     res.cookie('token', token);
-    console.log(data);
     res.redirect("/?a=1")
 });
 

@@ -16,6 +16,8 @@ let authorGithub = gd("author-github");
 let authorContainer = gd("author-container");
 let oauthButton = gd("oauth-button");
 
+let cachedProjectsData = undefined;
+
 function count(query) {
     let i = 0;
     for (let _ of query) {
@@ -99,9 +101,15 @@ function viewProjects() {
         projects.push(element.getAttribute("project"));
     }
 
+    if (cachedProjectsData) {
+        countHeartbeatTimes(cachedProjectsData.heartbeats, projects);
+        return;
+    }
+
     fetch(`/data?token=${tokenInput.value}&start=${startDateInput.value}&end=${endDateInput.value}`).then((res) => {
         res.text().then((value => {
             let data = JSON.parse(value);
+            cachedProjectsData = data;
             countHeartbeatTimes(data.heartbeats, projects);
         }))
     });
@@ -147,8 +155,8 @@ function fetchProjects() {
     });
 }
 
-startDateInput.addEventListener("input", fetchProjects);
-endDateInput.addEventListener("input", fetchProjects);
+startDateInput.addEventListener("input", () => { fetchProjects(); cachedProjectsData = undefined; });
+endDateInput.addEventListener("input", () => { fetchProjects(); cachedProjectsData = undefined; });
 tokenInput.addEventListener("input", () => { fetchProjects(); fetchAuthorData(); });
 
 const urlParams = new URLSearchParams(window.location.search);

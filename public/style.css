@@ -128,6 +128,7 @@ label,
     opacity: 0.1;
     margin: 0;
     transform: translateY(-0.5lh);
+    width: calc(100% - 25px);
 }
 
 #graph-loader {

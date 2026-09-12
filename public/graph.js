@@ -148,7 +148,7 @@ function renderGraph(heartbeats, projects) {
 
         let element = document.createElement("label");
         let span = document.createElement("span");
-        span.innerText = (v / 60).toFixed(1);
+        span.innerText = (v / 60).toFixed(1) + "h";
         element.innerText = " ";
 
         if (commitVerticalUnitSize) {

@@ -122,10 +122,12 @@ label,
     width: calc(100% - 10px);
     pointer-events: none;
     white-space: preserve;
+    color: blue;
 }
 
 #graph-y-labels>label>span {
     float: right;
+    color: red;
 }
 
 #graph-y-labels>label>hr {

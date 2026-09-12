@@ -61,6 +61,16 @@ async function fetchRepo(url) {
 }
 
 function repoInputChange() {
+    setTimeout(((v) => {
+        if (v == repoInput.value) {
+            fetchRepoInput();
+        }
+    }).bind(null, repoInput.value)
+        , 1000);
+}
+
+function fetchRepoInput() {
+    console.log("wa");
     let result = validateUrl(repoInput.value);
     if (result["owner"]) {
         fetchRepo(repoInput.value);
@@ -70,6 +80,7 @@ function repoInputChange() {
 }
 
 repoInput.addEventListener("input", repoInputChange);
+repoInput.addEventListener("focusout", fetchRepoInput);
 
 async function oauthButtonClick() {
     let token = await cookieStore.get("token");

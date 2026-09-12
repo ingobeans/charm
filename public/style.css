@@ -44,6 +44,20 @@ a[target="_blank"]::after {
     content: "\2197";
 }
 
+#repo-loader {
+    display: none;
+}
+
+.loading #repo-link,
+.loading #repo-name,
+.loading #repo-commits {
+    display: none;
+}
+
+.loading #repo-loader {
+    display: unset !important;
+}
+
 label,
 #author-github {
     display: block;

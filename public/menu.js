@@ -17,6 +17,11 @@ let authorContainer = gd("author-container");
 let authorLoader = gd("author-loader");
 let oauthButton = gd("oauth-button");
 let repoInput = gd("repo-input");
+let repoContainer = gd("repo-container");
+let repoLoader = gd("repo-loader");
+let repoName = gd("repo-name");
+let repoCommits = gd("repo-commits");
+let repoLink = gd("repo-link");
 
 let cachedProjectsData = undefined;
 
@@ -33,13 +38,26 @@ function count(query) {
 async function fetchRepo(url) {
     if (url == fetchedGithubRepo)
         return;
+    let result = validateUrl(url);
+    if (!result["owner"]) {
+        return;
+    }
+
     fetchedGithubRepo = url;
+
+    repoContainer.style.display = "";
+    repoContainer.classList.add("loading");
     console.log("fetching repo");
 
     apiUrl = "/repo?url=" + url;
     let r = await fetch(apiUrl);
     let b = await r.json();
-    parseCommits(b);
+    await parseCommits(b);
+    repoName.innerText = result.name;
+    repoCommits.innerText = commitCount + " commits";
+    repoLink.href = url;
+    repoLink.innerText = "View";
+    repoContainer.classList.remove("loading");
 }
 
 function repoInputChange() {

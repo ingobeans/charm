@@ -1,2 +1,3 @@
 oauthUid = "...";
 oauthSecret = "...";
+githubToken = "...";

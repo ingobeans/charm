@@ -30,12 +30,12 @@ for (let file of allowedFiles) {
 }
 
 app.get('/', function (req, res) {
-    root = req.protocol + '://' + req.get('host') + req.originalUrl;
+    root = req.protocol + '://' + req.get('host') + "/";
     res.render("index")
 });
 
 app.get('/callback', async (req, res) => {
-    root = req.protocol + '://' + req.get('host') + req.originalUrl;
+    root = req.protocol + '://' + req.get('host') + "/";
     let code = req.query["code"];
     let r = await fetch("https://hackatime.hackclub.com/oauth/token", {
         method: "POST",

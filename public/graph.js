@@ -126,9 +126,7 @@ function renderGraph(heartbeats, projects) {
         ctx.beginPath();
         iterateDates((date, _) => {
             let x = getDateX(date - firstTime) * horizontalScale + xOffset;
-            let value = commitDays[date];
-            if (!value)
-                return;
+            let value = commitDays[date] || 0;
             let maxY = highest * verticalScale;
             let y = value / highestCommitDays * maxY;
             ctx.lineTo(x, canvasHeight - y - yOffset);

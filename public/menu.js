@@ -16,8 +16,11 @@ let authorGithub = gd("author-github");
 let authorContainer = gd("author-container");
 let authorLoader = gd("author-loader");
 let oauthButton = gd("oauth-button");
+let repoInput = gd("repo-input");
 
 let cachedProjectsData = undefined;
+
+let fetchedGithubRepo = "";
 
 function count(query) {
     let i = 0;
@@ -26,6 +29,29 @@ function count(query) {
     }
     return i;
 }
+
+async function fetchRepo(url) {
+    if (url == fetchedGithubRepo)
+        return;
+    fetchedGithubRepo = url;
+    console.log("fetching repo");
+
+    apiUrl = "/repo?url=" + url;
+    let r = await fetch(apiUrl);
+    let b = await r.json();
+    parseCommits(b);
+}
+
+function repoInputChange() {
+    let result = validateUrl(repoInput.value);
+    if (result["owner"]) {
+        fetchRepo(repoInput.value);
+    } else {
+        // console.warn(result);
+    }
+}
+
+repoInput.addEventListener("input", repoInputChange);
 
 async function oauthButtonClick() {
     let token = await cookieStore.get("token");

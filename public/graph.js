@@ -154,12 +154,15 @@ function renderGraph(heartbeats, projects) {
 let commitDays = {};
 let highestCommitDays = 0;
 let firstCommitDay = undefined;
-function renderCommitGraph(commits) {
+let commitCount = 0;
+function parseCommits(commits) {
     commitDays = {};
     highestCommitDays = 0;
     firstCommitDay = undefined;
+    commitCount = 0;
 
     for (let commit of commits) {
+        commitCount++;
         let date = commit.commit.author.date;
         let dateObj = new Date(date);
         let dateValue = Math.floor(dateObj.valueOf() / 1000 / 60 / 60 / 24);
@@ -171,11 +174,4 @@ function renderCommitGraph(commits) {
             firstCommitDay = dateValue;
         }
     }
-}
-
-async function wa() {
-    url = "/repo?url=https://github.com/ingobeans/glorbos-conquest";
-    let r = await fetch(url);
-    let b = await r.json();
-    renderCommitGraph(b);
 }

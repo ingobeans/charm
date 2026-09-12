@@ -139,13 +139,25 @@ function renderGraph(heartbeats, projects) {
 
     let verticalUnitSteps = 5;
 
-    let verticalUnitSize = highest / (verticalUnitSteps);
+    let verticalUnitSize = highest / verticalUnitSteps;
+    let commitVerticalUnitSize = highestCommitDays / verticalUnitSteps;
+
     graphYLabels.innerHTML = "";
     for (let i = 0; i <= verticalUnitSteps; i++) {
         let v = verticalUnitSize * i;
+
         let element = document.createElement("label");
-        element.innerText = (v / 60).toFixed(1);
+        let span = document.createElement("span");
+        span.innerText = (v / 60).toFixed(1);
+        element.innerText = " ";
+
+        if (commitVerticalUnitSize) {
+            let commitV = commitVerticalUnitSize * i;
+            element.innerText = Math.floor(commitV);
+        }
+
         element.style.top = (canvasHeight - v * verticalScale - yOffset - 10) + "px";
+        element.appendChild(span);
         element.appendChild(document.createElement("hr"));
         graphYLabels.appendChild(element);
     }

@@ -120,15 +120,20 @@ label,
 #graph-y-labels>label {
     position: absolute;
     width: calc(100% - 10px);
-    text-align: right;
     pointer-events: none;
+    white-space: preserve;
+}
+
+#graph-y-labels>label>span {
+    float: right;
 }
 
 #graph-y-labels>label>hr {
     opacity: 0.1;
     margin: 0;
     transform: translateY(-0.5lh);
-    width: calc(100% - 25px);
+    width: calc(100% - 50px);
+    margin-left: 25px;
 }
 
 #graph-loader {

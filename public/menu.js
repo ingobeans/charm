@@ -105,13 +105,16 @@ function fetchAuthorData() {
 }
 
 function viewProjects() {
+    graphSection.classList.add("loading");
+    graphSection.style.display = "";
+
     let projects = [];
     for (let element of document.querySelectorAll(".selected-project")) {
         projects.push(element.getAttribute("project"));
     }
 
     if (cachedProjectsData) {
-        countHeartbeatTimes(cachedProjectsData.heartbeats, projects);
+        renderGraph(cachedProjectsData.heartbeats, projects);
         return;
     }
 
@@ -119,7 +122,7 @@ function viewProjects() {
         res.text().then((value => {
             let data = JSON.parse(value);
             cachedProjectsData = data;
-            countHeartbeatTimes(data.heartbeats, projects);
+            renderGraph(data.heartbeats, projects);
         }))
     });
 }

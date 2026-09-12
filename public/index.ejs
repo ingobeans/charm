@@ -75,13 +75,16 @@
             </div>
             <div class="inspect-section" id="graph-section" style="display: none;">
                 <label>GRAPH</label>
-                <div id="graph-y-labels">
-                    <label>3.8</label>
-                    <label>2.8</label>
-                    <label>1.6</label>
+                <div id="graph-y-labels"></div>
+
+                <div id="graph-loader">
+                    <div class="loader"></div>
+                    <span>Parsing Hackatime data. For large projects this can take up to 20
+                        seconds.</span>
                 </div>
+
                 <div id="graph-container">
-                    <canvas id="graph-canvas"></canvas>
+                    <canvas width="0" height="0" id="graph-canvas"></canvas>
                 </div>
             </div>
         </div>

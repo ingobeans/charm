@@ -4,7 +4,7 @@ let graphCanvas = gd("graph-canvas");
 let ctx = graphCanvas.getContext("2d");
 
 let cachedDates = {};
-function countHeartbeatTimes(heartbeats, projects) {
+function renderGraph(heartbeats, projects) {
     let dates = {};
     let registeredTimes = {};
     let minutesTrack = 2;
@@ -49,7 +49,7 @@ function countHeartbeatTimes(heartbeats, projects) {
         }
     }
 
-    graphSection.style.display = "";
+    graphSection.classList.remove("loading");
 
     let horizontalScale = 1.0;
     let verticalScale = 0.5;

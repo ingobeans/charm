@@ -106,6 +106,29 @@ label,
     right: 10px;
 }
 
+#graph-loader {
+    display: none;
+    margin: 20px 0;
+}
+
+.loading>#graph-container,
+.loading>#graph-y-labels {
+    display: none;
+}
+
+.loading>#graph-loader {
+    display: flex;
+}
+
+#graph-loader>.loader {
+    margin-left: 10px;
+}
+
+#graph-loader>span {
+    width: 300px;
+    margin-left: 10px;
+}
+
 /* #graph-section {} */
 
 .info-mark {

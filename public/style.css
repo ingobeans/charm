@@ -21,6 +21,7 @@ body {
     font-family: "Verdana";
     --sidebar-width: 300px;
     margin: 0;
+    scrollbar-color: gray transparent;
 }
 
 #darkmode-switch {
@@ -92,7 +93,7 @@ label,
 
 #graph-container {
     max-width: 800px;
-    overflow: scroll;
+    overflow: auto;
     padding-bottom: 15px;
 }
 
@@ -196,7 +197,7 @@ label,
     border: 1px solid var(--border-color);
     width: fit-content;
     height: 220px;
-    overflow: scroll;
+    overflow: auto;
     width: 100%;
 }
 

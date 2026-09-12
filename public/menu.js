@@ -234,6 +234,7 @@ if (urlParams.get('a') == "1") {
     cookieStore.get("token").then((v) => {
         if (v) {
             oauthButtonClick();
+            inputChange();
         }
     })
 }

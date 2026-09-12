@@ -40,6 +40,11 @@ function renderGraph(heartbeats, projects) {
     if (firstCommitDay && firstCommitDay < firstTime) {
         firstTime = firstCommitDay;
     }
+
+    // padding
+    lastTime += 1;
+    firstTime -= 1;
+
     cachedDates = dates;
     console.log("Finished parsing heartbeat data");
     console.log(dates);

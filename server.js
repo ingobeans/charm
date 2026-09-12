@@ -36,7 +36,7 @@ app.get('/callback', async (req, res) => {
     });
     let data = await r.json();
     let token = data["access_token"];
-    res.cookie('token', token);
+    res.cookie('token', token, { expires: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000) });
     res.redirect("/?a=1")
 });
 

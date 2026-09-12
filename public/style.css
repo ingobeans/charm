@@ -6,6 +6,9 @@ html {
     --text-color: white;
     --muted-text-color: gray;
     --grid-border-color: #5656563e;
+
+    --graph-blue: #5980f2;
+    --graph-red: #ff454e;
 }
 
 .light-root {
@@ -121,12 +124,12 @@ label,
     width: calc(100% - 10px);
     pointer-events: none;
     white-space: preserve;
-    color: blue;
+    color: var(--graph-blue);
 }
 
 #graph-y-labels>label>span {
     float: right;
-    color: red;
+    color: var(--graph-red);
 }
 
 #graph-y-labels>label>hr {

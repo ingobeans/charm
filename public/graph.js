@@ -140,7 +140,7 @@ function renderGraph(heartbeats, projects) {
         let y = (value || 0) * verticalScale;
         ctx.lineTo(x, canvasHeight - y - yOffset);
     });
-    ctx.strokeStyle = "red";
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--graph-red");
     ctx.stroke();
 
     ctx.font = "12px Verdana";
@@ -164,7 +164,7 @@ function renderGraph(heartbeats, projects) {
             let y = value / highestCommitDays * maxY;
             ctx.lineTo(x, canvasHeight - y - yOffset);
         });
-        ctx.strokeStyle = "blue";
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--graph-blue");
         ctx.stroke();
     }
 

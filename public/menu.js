@@ -53,8 +53,14 @@ async function fetchRepo(url) {
     let r = await fetch(apiUrl);
     let b = await r.json();
     await parseCommits(b);
-    repoName.innerText = result.name;
-    repoCommits.innerText = commitCount + " commits";
+    if (commitError) {
+        repoName.innerText = "";
+        repoCommits.innerText = "Error: " + commitError;
+
+    } else {
+        repoName.innerText = result.name;
+        repoCommits.innerText = commitCount + " commits";
+    }
     repoLink.href = url;
     repoLink.innerText = "View";
     repoContainer.classList.remove("loading");

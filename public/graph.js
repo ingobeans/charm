@@ -155,15 +155,27 @@ let commitDays = {};
 let highestCommitDays = 0;
 let firstCommitDay = undefined;
 let commitCount = 0;
+let commitError = undefined;
 function parseCommits(commits) {
     commitDays = {};
     highestCommitDays = 0;
     firstCommitDay = undefined;
     commitCount = 0;
+    commitError = undefined;
 
     for (let commit of commits) {
-        commitCount++;
+        if (!commit["commit"]) {
+            console.log(commits);
+            console.log(commit);
+            if (commit["message"]) {
+                commitError = commit["message"];
+            } else {
+                commitError = "Failed fetching repository";
+            }
+            return;
+        }
         let date = commit.commit.author.date;
+        commitCount++;
         let dateObj = new Date(date);
         let dateValue = Math.floor(dateObj.valueOf() / 1000 / 60 / 60 / 24);
         commitDays[dateValue] = (commitDays[dateValue] || 0) + 1;

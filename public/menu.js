@@ -93,6 +93,7 @@ repoInput.addEventListener("focusout", fetchRepoInput);
 async function oauthButtonClick() {
     let token = await cookieStore.get("token");
     if (token) {
+        oauthButton.setAttribute("disabled", "");
         tokenInput.value = token.value;
         fetchProjects();
         fetchAuthorData();
@@ -222,7 +223,11 @@ function fetchProjects() {
 
 startDateInput.addEventListener("input", () => { fetchProjects(); cachedProjectsData = undefined; });
 endDateInput.addEventListener("input", () => { fetchProjects(); cachedProjectsData = undefined; });
-tokenInput.addEventListener("input", () => { fetchProjects(); fetchAuthorData(); });
+tokenInput.addEventListener("input", () => {
+    fetchProjects();
+    fetchAuthorData();
+    if (oauthButton) oauthButton.removeAttribute("disabled");
+});
 
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('a') == "1") {

@@ -79,15 +79,18 @@ function renderGraph(heartbeats, projects) {
                 break;
             }
 
-            callback(date, value);
+            callback(date, value, index);
             if (dateCount >= dateAmt) {
                 break;
             }
             index++;
         }
     }
+    let horizontalPadding = 100;
+    let maxX = getDateX(lastTime - firstTime);
+    horizontalScale = (800 - horizontalPadding) / maxX;
 
-    let canvasWidth = getDateX(lastTime - firstTime) + 100;
+    let canvasWidth = maxX * horizontalScale + horizontalPadding;
     graphCanvas.width = canvasWidth;
     let xOffset = 30;
 
@@ -102,7 +105,11 @@ function renderGraph(heartbeats, projects) {
 
     ctx.font = "12px Verdana";
     ctx.fillStyle = "gray";
-    iterateDates((date, value) => {
+    let showXLabelEvery = Math.max(Math.floor(1 / horizontalScale / 1.2), 1);
+    iterateDates((date, value, index) => {
+        if (index % showXLabelEvery != 0) {
+            return;
+        }
         let x = getDateX(date - firstTime) * horizontalScale + xOffset;
         let dateObj = new Date(date * 24 * 60 * 60 * 1000);
         ctx.fillText(dateObj.getDate() + "/" + (dateObj.getMonth() + 1), x, canvasHeight);

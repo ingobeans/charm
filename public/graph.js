@@ -10,7 +10,6 @@ function renderGraph(heartbeats, projects) {
     let registeredTimes = {};
     let minutesTrack = 2;
     let firstTime = undefined;
-    let firstTimeDate = undefined;
     let lastTime = 0;
     for (let heartbeat of heartbeats) {
         if (projects.length != 0 && !projects.includes(heartbeat.project)) {
@@ -37,6 +36,9 @@ function renderGraph(heartbeats, projects) {
             lastTime = dateValue;
         }
         dates[dateValue] = (dates[dateValue] || 0) + minutesTrack;
+    }
+    if (firstCommitDay && firstCommitDay < firstTime) {
+        firstTime = firstCommitDay;
     }
     cachedDates = dates;
     console.log("Finished parsing heartbeat data");
@@ -146,9 +148,11 @@ function renderGraph(heartbeats, projects) {
 
 let commitDays = {};
 let highestCommitDays = 0;
+let firstCommitDay = undefined;
 function renderCommitGraph(commits) {
     commitDays = {};
     highestCommitDays = 0;
+    firstCommitDay = undefined;
 
     for (let commit of commits) {
         let date = commit.commit.author.date;
@@ -157,6 +161,9 @@ function renderCommitGraph(commits) {
         commitDays[dateValue] = (commitDays[dateValue] || 0) + 1;
         if (commitDays[dateValue] > highestCommitDays) {
             highestCommitDays = commitDays[dateValue];
+        }
+        if (!firstCommitDay || dateValue < firstCommitDay) {
+            firstCommitDay = dateValue;
         }
     }
 }

@@ -1,5 +1,5 @@
 .loader {
-    --color-1: #fff;
+    --color-1: var(--text-color);
     --size: 1px;
     width: calc(48 * var(--size));
     height: calc(48 * var(--size));

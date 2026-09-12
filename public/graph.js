@@ -115,6 +115,21 @@ function renderGraph(heartbeats, projects) {
         ctx.fillText(dateObj.getDate() + "/" + (dateObj.getMonth() + 1), x, canvasHeight);
     });
 
+    if (Object.keys(commitDays).length > 0) {
+        ctx.beginPath();
+        iterateDates((date, _) => {
+            let x = getDateX(date - firstTime) * horizontalScale + xOffset;
+            let value = commitDays[date];
+            if (!value)
+                return;
+            let maxY = highest * verticalScale;
+            let y = value / highestCommitDays * maxY;
+            ctx.lineTo(x, canvasHeight - y - yOffset);
+        });
+        ctx.strokeStyle = "blue";
+        ctx.stroke();
+    }
+
     let verticalUnitSteps = 5;
 
     let verticalUnitSize = highest / (verticalUnitSteps);
@@ -128,4 +143,27 @@ function renderGraph(heartbeats, projects) {
         graphYLabels.appendChild(element);
     }
 }
-// countHeartbeatTimes(cached.heartbeats, [cached.heartbeats[0].project]);
+
+let commitDays = {};
+let highestCommitDays = 0;
+function renderCommitGraph(commits) {
+    commitDays = {};
+    highestCommitDays = 0;
+
+    for (let commit of commits) {
+        let date = commit.commit.author.date;
+        let dateObj = new Date(date);
+        let dateValue = Math.floor(dateObj.valueOf() / 1000 / 60 / 60 / 24);
+        commitDays[dateValue] = (commitDays[dateValue] || 0) + 1;
+        if (commitDays[dateValue] > highestCommitDays) {
+            highestCommitDays = commitDays[dateValue];
+        }
+    }
+}
+
+async function wa() {
+    url = "/repo?url=https://github.com/ingobeans/glorbos-conquest";
+    let r = await fetch(url);
+    let b = await r.json();
+    renderCommitGraph(b);
+}

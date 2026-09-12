@@ -22,6 +22,7 @@ let repoLoader = gd("repo-loader");
 let repoName = gd("repo-name");
 let repoCommits = gd("repo-commits");
 let repoLink = gd("repo-link");
+let repoError = gd("repo-error");
 
 let cachedProjectsData = undefined;
 
@@ -55,9 +56,10 @@ async function fetchRepo(url) {
     await parseCommits(b);
     if (commitError) {
         repoName.innerText = "";
-        repoCommits.innerText = "Error: " + commitError;
-
+        repoCommits.innerText = "";
+        repoError.innerHTML = errorSvg + commitError;
     } else {
+        repoError.innerHTML = "";
         repoName.innerText = result.name;
         repoCommits.innerText = commitCount + " commits";
     }

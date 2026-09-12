@@ -50,6 +50,7 @@ a[target="_blank"]::after {
 
 .loading #repo-link,
 .loading #repo-name,
+.loading #repo-error,
 .loading #repo-commits {
     display: none;
 }

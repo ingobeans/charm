@@ -14,6 +14,7 @@ let authorPfp = gd("author-pfp");
 let authorSlackId = gd("author-slackid");
 let authorGithub = gd("author-github");
 let authorContainer = gd("author-container");
+let authorLoader = gd("author-loader");
 let oauthButton = gd("oauth-button");
 
 let cachedProjectsData = undefined;
@@ -69,6 +70,14 @@ for (let input of document.querySelectorAll("input")) {
 }
 
 function fetchAuthorData() {
+    authorName.innerHTML = "";
+    authorSlackId.innerText = "";
+    authorGithub.innerText = "";
+    authorGithub.style.visibility = "hidden";
+    authorContainer.style.display = "";
+    authorContainer.classList.add("loading");
+
+
     let value = tokenInput.value;
     if (value == "") {
         authorContainer.style.display = "none";
@@ -80,7 +89,7 @@ function fetchAuthorData() {
     fetch(`/user?token=${tokenInput.value}`).then((res) => {
         res.text().then((value => {
             let data = JSON.parse(value);
-            authorContainer.style.display = "";
+            authorContainer.classList.remove("loading");
             authorSlackId.innerText = data["slack_id"] || "";
             authorGithub.innerText = data["github_username"] || "";
             authorGithub.href = (data["github_username"]) ? ("https://github.com/" + data["github_username"]) : "";

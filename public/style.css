@@ -51,6 +51,18 @@ label,
     color: var(--muted-text-color);
 }
 
+#author-loader {
+    display: none;
+}
+
+.loading #author-loader {
+    display: unset !important;
+}
+
+.loading #author-pfp {
+    display: none;
+}
+
 #oauth-button {
     margin: 20px 0 28px 0;
     width: 115px

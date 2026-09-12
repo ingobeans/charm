@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <title>Charm</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="loader.css">
     <script>
         light = localStorage.getItem("light") == "true";
         if (light) {
@@ -64,6 +65,7 @@
                 <hr>
                 <div class="flex-row">
                     <img src="" id="author-pfp" class="pfp">
+                    <div id="author-loader" class="loader"></div>
                     <div>
                         <span id="author-name"></span>
                         <label id="author-slackid"></label>

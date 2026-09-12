@@ -88,7 +88,7 @@ label,
     border: solid 1px var(--border-color);
     width: fit-content;
     padding: 5px;
-    margin-bottom: 15px;
+    margin: 0 15px 15px 0;
 }
 
 #graph-container {

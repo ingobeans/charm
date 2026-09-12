@@ -4,38 +4,56 @@ let graphCanvas = gd("graph-canvas");
 let ctx = graphCanvas.getContext("2d");
 
 let horizontalScale = 1.0;
-let cachedDates = {};
+
+let cachedDates = undefined;
+let cachedFirstTime = undefined;
+let cachedLastTime = undefined;
+
 function renderGraph(heartbeats, projects) {
-    let dates = {};
     let registeredTimes = {};
     let minutesTrack = 2;
+    let dates = {};
     let firstTime = undefined;
     let lastTime = 0;
-    for (let heartbeat of heartbeats) {
-        if (projects.length != 0 && !projects.includes(heartbeat.project)) {
-            continue;
-        }
-        let date = new Date(heartbeat.time * 1000);
-        date.setMilliseconds(0);
-        date.setSeconds(0);
-        date.setMinutes(Math.floor(date.getMinutes() / minutesTrack) * minutesTrack);
-        if (!registeredTimes[date.valueOf()]) {
-            registeredTimes[date.valueOf()] = true;
-        } else {
-            continue;
+    if (!heartbeats && cachedDates) {
+        dates = cachedDates;
+        lastTime = cachedLastTime;
+        firstTime = cachedFirstTime;
+    } else if (!heartbeats) {
+        return;
+    } else {
+        dates = {};
+        firstTime = undefined;
+        lastTime = 0;
+        for (let heartbeat of heartbeats) {
+            if (projects.length != 0 && !projects.includes(heartbeat.project)) {
+                continue;
+            }
+            let date = new Date(heartbeat.time * 1000);
+            date.setMilliseconds(0);
+            date.setSeconds(0);
+            date.setMinutes(Math.floor(date.getMinutes() / minutesTrack) * minutesTrack);
+            if (!registeredTimes[date.valueOf()]) {
+                registeredTimes[date.valueOf()] = true;
+            } else {
+                continue;
+            }
+
+            date.setMinutes(0);
+            date.setHours(0);
+            let dateValue = Math.floor(heartbeat.time / 60 / 60 / 24);
+            if (!firstTime || firstTime > dateValue) {
+                firstTime = dateValue;
+                firstTimeDate = heartbeat.time;
+            }
+            if (lastTime < dateValue) {
+                lastTime = dateValue;
+            }
+            dates[dateValue] = (dates[dateValue] || 0) + minutesTrack;
         }
 
-        date.setMinutes(0);
-        date.setHours(0);
-        let dateValue = Math.floor(heartbeat.time / 60 / 60 / 24);
-        if (!firstTime || firstTime > dateValue) {
-            firstTime = dateValue;
-            firstTimeDate = heartbeat.time;
-        }
-        if (lastTime < dateValue) {
-            lastTime = dateValue;
-        }
-        dates[dateValue] = (dates[dateValue] || 0) + minutesTrack;
+        cachedLastTime = lastTime;
+        cachedFirstTime = firstTime;
     }
     if (firstCommitDay && firstCommitDay < firstTime) {
         firstTime = firstCommitDay;
@@ -196,4 +214,5 @@ function parseCommits(commits) {
             firstCommitDay = dateValue;
         }
     }
+    renderGraph();
 }

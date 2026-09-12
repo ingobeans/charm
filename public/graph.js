@@ -120,7 +120,22 @@ function renderGraph(heartbeats, projects) {
     let xOffset = 30;
 
     ctx.beginPath();
+
+    // if started is false:
+    // the line wont be drawn until the first data point,
+    // otherwise it will default to 0 until the first data point.
+    //
+    // started is set to false when the selected date selection begins
+    // the same date as the first heartbeat, since then we cant guarantee
+    // that the previous days with missing datapoints are 0 hours.
+    let started = Math.floor(startDateInput.valueAsDate.valueOf() / 1000 / 60 / 60 / 24) != cachedFirstTime;
     iterateDates((date, value) => {
+        if (value && !started) {
+            started = true;
+        }
+        if (!value && !started) {
+            return;
+        }
         let x = getDateX(date - firstTime) * horizontalScale + xOffset;
         let y = (value || 0) * verticalScale;
         ctx.lineTo(x, canvasHeight - y - yOffset);

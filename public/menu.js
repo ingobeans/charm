@@ -44,17 +44,6 @@ function clickProject(element) {
     } else {
         element.classList.add("selected-project");
     }
-
-    let amt = count(document.querySelectorAll(".selected-project"));
-    if (amt > 0) {
-        if (viewBtn.hasAttribute("disabled")) {
-            viewBtn.removeAttribute("disabled");
-        }
-    } else {
-        if (!viewBtn.hasAttribute("disabled")) {
-            viewBtn.setAttribute("disabled", "");
-        }
-    }
 }
 
 function inputChange() {
@@ -150,6 +139,7 @@ function fetchProjects() {
                 return;
             }
             projectSelectContainer.innerHTML = "";
+            viewBtn.removeAttribute("disabled");
             for (let project of data["projects"]) {
                 let entry = document.createElement("div");
                 entry.setAttribute("project", project.name);

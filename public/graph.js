@@ -3,6 +3,7 @@ let graphYLabels = gd("graph-y-labels");
 let graphCanvas = gd("graph-canvas");
 let ctx = graphCanvas.getContext("2d");
 
+let horizontalScale = 1.0;
 let cachedDates = {};
 function renderGraph(heartbeats, projects) {
     let dates = {};
@@ -12,7 +13,7 @@ function renderGraph(heartbeats, projects) {
     let firstTimeDate = undefined;
     let lastTime = 0;
     for (let heartbeat of heartbeats) {
-        if (!projects.includes(heartbeat.project)) {
+        if (projects.length != 0 && !projects.includes(heartbeat.project)) {
             continue;
         }
         let date = new Date(heartbeat.time * 1000);
@@ -51,7 +52,6 @@ function renderGraph(heartbeats, projects) {
 
     graphSection.classList.remove("loading");
 
-    let horizontalScale = 1.0;
     let verticalScale = 0.5;
 
     let canvasHeight = (highest * verticalScale) + 40;

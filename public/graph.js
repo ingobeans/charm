@@ -116,7 +116,8 @@ function renderGraph(heartbeats, projects) {
         let v = verticalUnitSize * i;
         let element = document.createElement("label");
         element.innerText = (v / 60).toFixed(1);
-        element.style.top = (canvasHeight - v * verticalScale - yOffset) + "px";
+        element.style.top = (canvasHeight - v * verticalScale - yOffset - 10) + "px";
+        element.appendChild(document.createElement("hr"));
         graphYLabels.appendChild(element);
     }
 }

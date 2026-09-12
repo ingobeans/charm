@@ -103,7 +103,15 @@ label,
 
 #graph-y-labels>label {
     position: absolute;
-    right: 10px;
+    width: calc(100% - 10px);
+    text-align: right;
+    pointer-events: none;
+}
+
+#graph-y-labels>label>hr {
+    opacity: 0.1;
+    margin: 0;
+    transform: translateY(-0.5lh);
 }
 
 #graph-loader {

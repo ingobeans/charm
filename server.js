@@ -6,6 +6,7 @@ try {
     require("./config.js");
 } catch {
     oauthUid = undefined;
+    githubToken = undefined;
 }
 
 root = "";
@@ -15,6 +16,16 @@ const port = 8080;
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/public');
+
+let allowedFiles = fs.readdirSync('./public');
+for (let file of allowedFiles) {
+    if (file.endsWith(".ejs")) {
+        continue;
+    }
+    app.get('/' + file, function (req, res) {
+        res.sendFile(path.join(__dirname + '/public/' + file));
+    });
+}
 
 app.get('/', function (req, res) {
     root = req.protocol + '://' + req.get('host') + req.originalUrl;
@@ -40,15 +51,75 @@ app.get('/callback', async (req, res) => {
     res.redirect("/?a=1")
 });
 
-let allowedFiles = fs.readdirSync('./public');
-for (let file of allowedFiles) {
-    if (file.endsWith(".ejs")) {
-        continue;
-    }
-    app.get('/' + file, function (req, res) {
-        res.sendFile(path.join(__dirname + '/public/' + file));
-    });
+function validateUrl(url) {
+    if (!url)
+        return "Missing Url";
+
+    let urlObj = URL.parse(url);
+    if (!urlObj)
+        return "Couldn't parse Url";
+
+    if (!["http:", "https:"].includes(urlObj.protocol))
+        return "Bad Url protocol. Must be http/https";
+
+    if (urlObj.host != "github.com")
+        return "Bad host. Must be github.com";
+
+    let path = urlObj.pathname.split("/");
+    if (path.length < 3)
+        return "Bad repo path";
+
+    let owner = path[1];
+    let name = path[2];
+    return { owner: owner, name: name };
 }
+
+app.get('/repo', async (req, res) => {
+    let url = req.query["url"];
+    let result = validateUrl(url);
+    if (!result["owner"]) {
+        res.send({ error: result });
+        return;
+    }
+
+    let commits = [];
+
+    let apiUrl = `https://api.github.com/repos/${result.owner}/${result.name}/commits?per_page=100`;
+    let headers = {
+        "Accept": "application/json",
+        "X-GitHub-Api-Version": "2026-03-10",
+    };
+    if (githubToken) {
+        headers["Authorization"] = "Bearer " + githubToken;
+    }
+    let apiRes = await fetch(apiUrl, { headers: headers });
+
+
+    // loop because api is paginated,
+    // so sometimes more requests are needed
+    // to read all pages of data
+    for (let i = 0; i < 15; i++) {
+        let body = await apiRes.json();
+        commits = commits.concat(body);
+
+        // response contains a "link" header,
+        // if there are more pages to be read.
+        // link points to a new api url where the
+        // next page of data can be fetched
+        let link = apiRes.headers.get("link");
+        if (link) {
+            let entry = link.split(",")[0];
+            // check that the link actually points to the next page
+            // of data, rather than the first.
+            if (!entry.includes('rel="next"')) { break; }
+            apiUrl = link.split(";")[0].replace("<", "").replace(">", "");
+            apiRes = await fetch(apiUrl, { headers: headers });
+        } else {
+            break;
+        }
+    }
+    res.send(commits);
+});
 
 app.get("/user", async (req, res) => {
     let reqData = {
@@ -101,6 +172,7 @@ app.get("/data", async (req, res) => {
     let datesError = validateDates(req);
     if (datesError) {
         res.send({ error: datesError });
+        return;
     }
     let reqData = {
         credentials: "include",

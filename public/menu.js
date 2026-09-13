@@ -23,6 +23,7 @@ let repoName = gd("repo-name");
 let repoCommits = gd("repo-commits");
 let repoLink = gd("repo-link");
 let repoError = gd("repo-error");
+let graphSection = gd("graph-section");
 
 let cachedProjectsData = undefined;
 
@@ -165,22 +166,28 @@ function fetchAuthorData() {
     fetch(`/user?token=${value}`).then(handleAuthorDataReq)
 }
 
-function viewProjects() {
+function handleViewProjectsReq(res) {
+    res.text().then((value => {
+        let data = JSON.parse(value);
+        cachedProjectsData = data;
+        renderGraph(data.heartbeats, projects);
+    }))
+}
+
+function startLoadingGraph() {
     graphSection.classList.add("loading");
     graphSection.style.display = "";
+}
+
+function viewProjects() {
+    startLoadingGraph();
 
     if (cachedProjectsData) {
         renderGraph(cachedProjectsData.heartbeats, projects);
         return;
     }
 
-    fetch(`/data?token=${tokenInput.value}&start=${startDateInput.value}&end=${endDateInput.value}`).then((res) => {
-        res.text().then((value => {
-            let data = JSON.parse(value);
-            cachedProjectsData = data;
-            renderGraph(data.heartbeats, projects);
-        }))
-    });
+    fetch(`/data?token=${tokenInput.value}&start=${startDateInput.value}&end=${endDateInput.value}`).then(handleViewProjectsReq);
 }
 
 function handleFetchProjectsReq(res) {
@@ -246,6 +253,9 @@ if (urlParams.get("s")) {
     startLoadingAuthor();
     fetch(`/user?s=${session}`).then(handleAuthorDataReq);
     fetch(`/projects?s=${session}`).then(handleFetchProjectsReq);
+    startLoadingGraph();
+    console.log("wa");
+    fetch(`/data?s=${session}`).then(handleViewProjectsReq);
 }
 else if (urlParams.get('a') == "1") {
     cookieStore.get("token").then((v) => {

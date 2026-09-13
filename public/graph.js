@@ -1,4 +1,3 @@
-let graphSection = gd("graph-section");
 let graphYLabels = gd("graph-y-labels");
 let graphCanvas = gd("graph-canvas");
 let ctx = graphCanvas.getContext("2d");

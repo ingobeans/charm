@@ -246,11 +246,11 @@ app.get("/data", async (req, res) => {
     let reqData = {
         credentials: "include",
         headers: {
-            "Authorization": "Bearer " + req.query["token"],
+            "Authorization": "Bearer " + query["token"],
         }
     };
 
-    url = `https://hackatime.hackclub.com/api/v1/my/heartbeats?start_time=${req.query["start"]}&end_time=${req.query["end"]}`;
+    url = `https://hackatime.hackclub.com/api/v1/my/heartbeats?start_time=${query["start"]}&end_time=${query["end"] || ""}`;
 
     let r = await fetch(url, reqData);
     let data = await r.json();

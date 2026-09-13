@@ -70,11 +70,20 @@ app.get('/create_session', function (req, res) {
         return;
     }
     let allowedKeys = ["token", "start_date", "end_date", "repo", "projects"];
+    let requiredKeys = ["token", "start_date"];
     for (let [k, v] of Object.entries(session)) {
         if (!allowedKeys.includes(k)) {
             res.send({ error: "Unallowed key: " + k });
             return;
         }
+        let i = requiredKeys.indexOf(k);
+        if (i != -1) {
+            requiredKeys.splice(i, 1);
+        }
+    }
+    if (requiredKeys.length > 0) {
+        res.send({ error: "Missing required key(s): " + requiredKeys });
+        return;
     }
 
     let encrypted = encryptSession(JSON.stringify(session));

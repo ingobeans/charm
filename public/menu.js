@@ -27,7 +27,6 @@ let repoError = gd("repo-error");
 let cachedProjectsData = undefined;
 
 let fetchedGithubRepo = "";
-let projects = [];
 
 function count(query) {
     let i = 0;

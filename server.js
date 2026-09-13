@@ -47,10 +47,14 @@ function decryptSession(entry) {
 }
 
 app.get('/', function (req, res) {
+    let projects = [];
     if (req.query["s"]) {
         try {
             let decrypted = decryptSession(req.query["s"]);
             let data = JSON.parse(decrypted);
+            if (data["projects"] && typeof data["projects"] == "object" && data["projects"].length) {
+                projects = data["projects"];
+            }
             console.log(data);
         } catch {
             res.redirect("/");
@@ -58,7 +62,7 @@ app.get('/', function (req, res) {
         }
     }
     root = req.protocol + '://' + req.get('host') + "/";
-    res.render("index")
+    res.render("index", { projects: projects })
 });
 
 app.get('/create_session', function (req, res) {

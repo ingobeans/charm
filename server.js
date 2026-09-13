@@ -48,9 +48,14 @@ function decryptSession(entry) {
 
 app.get('/', function (req, res) {
     if (req.query["s"]) {
-        let decrypted = decryptSession(req.query["s"]);
-        let data = JSON.parse(decrypted);
-        console.log(data);
+        try {
+            let decrypted = decryptSession(req.query["s"]);
+            let data = JSON.parse(decrypted);
+            console.log(data);
+        } catch {
+            res.redirect("/");
+            return;
+        }
     }
     root = req.protocol + '://' + req.get('host') + "/";
     res.render("index")

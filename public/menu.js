@@ -27,6 +27,7 @@ let repoError = gd("repo-error");
 let cachedProjectsData = undefined;
 
 let fetchedGithubRepo = "";
+let projects = [];
 
 function count(query) {
     let i = 0;
@@ -105,8 +106,10 @@ async function oauthButtonClick() {
 function clickProject(element) {
     if (element.classList.contains("selected-project")) {
         element.classList.remove("selected-project");
+        projects.splice(projects.indexOf(element.getAttribute("project")), 1);
     } else {
         element.classList.add("selected-project");
+        projects.push(element.getAttribute("project"));
     }
 }
 
@@ -167,11 +170,6 @@ function viewProjects() {
     graphSection.classList.add("loading");
     graphSection.style.display = "";
 
-    let projects = [];
-    for (let element of document.querySelectorAll(".selected-project")) {
-        projects.push(element.getAttribute("project"));
-    }
-
     if (cachedProjectsData) {
         renderGraph(cachedProjectsData.heartbeats, projects);
         return;
@@ -187,6 +185,8 @@ function viewProjects() {
 }
 
 function handleFetchProjectsReq(res) {
+    oldProjects = projects;
+    projects = [];
     res.text().then((value => {
         let data = JSON.parse(value);
         console.log(data);
@@ -199,9 +199,13 @@ function handleFetchProjectsReq(res) {
         for (let project of data["projects"]) {
             let entry = document.createElement("div");
             entry.setAttribute("project", project.name);
+            if (oldProjects.includes(project.name)) {
+                projects.push(project.name);
+                entry.classList.add("selected-project");
+            }
             let name = document.createElement("span");
             let hours = document.createElement("span");
-            hours.className = "hour-count";
+            hours.classList.add("hour-count");
             name.innerText = project.name;
             hours.innerText = (project.total_seconds / 60 / 60).toFixed(1);
             entry.appendChild(name);

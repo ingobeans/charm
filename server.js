@@ -36,11 +36,11 @@ function encryptSession(text) {
     let iv = crypto.randomBytes(8).toString('hex');
     let cipher = crypto.createCipheriv(algorithm, key, iv);
     let encrypted = cipher.update(text, 'utf8', 'base64') + cipher.final('base64');
-    return encrypted.replace("+", "_") + iv;
+    return encrypted.replaceAll("+", "_") + iv;
 }
 function decryptSession(entry) {
     let iv = entry.slice(-16);
-    let encrypted = entry.slice(0, -16).replace("_", "+");
+    let encrypted = entry.slice(0, -16).replaceAll("_", "+");
     let decipher = crypto.createDecipheriv(algorithm, key, iv);
     let decrypted = decipher.update(encrypted, 'base64', 'utf8') + decipher.final('utf8');
     return decrypted;
@@ -74,8 +74,8 @@ app.get('/create_session', function (req, res) {
         res.send({ error: "Couldn't parse session as JSON. Error: " + error });
         return;
     }
-    let allowedKeys = ["token", "start_date", "end_date", "repo", "projects"];
-    let requiredKeys = ["token", "start_date"];
+    let allowedKeys = ["token", "start", "end", "repo", "projects"];
+    let requiredKeys = ["token", "start"];
     for (let [k, v] of Object.entries(session)) {
         if (!allowedKeys.includes(k)) {
             res.send({ error: "Unallowed key: " + k });
@@ -163,25 +163,28 @@ app.get('/repo', async (req, res) => {
     res.send(commits);
 });
 
-function decodeSession(session) {
-    try {
-        let decrypted = decryptSession(session);
-        let data = JSON.parse(decrypted);
-        return data;
-    } catch {
-        return {};
+function decodeSession(req) {
+    let s = req.query["s"];
+
+    if (s) {
+        try {
+            let decrypted = decryptSession(s);
+            let data = JSON.parse(decrypted);
+            let query = {}
+            for (let [k, v] of Object.entries(data)) {
+                query[k] = v;
+            }
+            return query;
+        } catch (error) {
+            // console.warn(error)
+        }
     }
+    return req.query;
 }
 
 app.get("/user", async (req, res) => {
-    let token = req.query["token"];
-    if (req.query["s"]) {
-        let session = decodeSession(req.query["s"]);
-        if (session["token"]) {
-            token = session["token"];
-        }
-    }
-    console.log(token);
+    let query = decodeSession(req);
+    let token = query["token"];
 
     let reqData = {
         credentials: "include",
@@ -209,22 +212,20 @@ app.get("/user", async (req, res) => {
     res.send(data);
 });
 
-function validateDates(req) {
+function validateDates(query) {
     let allowedDateChars = "0123456789-";
 
-    let start = req.query["start"];
+    let start = query["start"];
     if (start == undefined || start.length == 0) {
         return `Missing start date`;
     }
 
     for (let field of ["start", "end"]) {
-        if (req.query[field] == undefined) {
+        if (query[field] == undefined) {
             continue;
         }
-        for (let char of req.query[field]) {
+        for (let char of query[field]) {
             if (!allowedDateChars.includes(char)) {
-                console.log(req.query[field]);
-                console.log("req.query[field]");
                 return `Bad ${field} date`;
             }
         }
@@ -232,7 +233,8 @@ function validateDates(req) {
 }
 
 app.get("/data", async (req, res) => {
-    let datesError = validateDates(req);
+    let query = decodeSession(req);
+    let datesError = validateDates(query);
     if (datesError) {
         res.send({ error: datesError });
         return;
@@ -252,7 +254,8 @@ app.get("/data", async (req, res) => {
 });
 
 app.get("/projects", async (req, res) => {
-    let datesError = validateDates(req);
+    let query = decodeSession(req);
+    let datesError = validateDates(query);
     if (datesError) {
         res.send({ error: datesError });
         return;
@@ -260,11 +263,11 @@ app.get("/projects", async (req, res) => {
     let reqData = {
         credentials: "include",
         headers: {
-            "Authorization": "Bearer " + req.query["token"],
+            "Authorization": "Bearer " + query["token"],
         }
     };
 
-    url = `https://hackatime.hackclub.com/api/v1/authenticated/projects?start_date=${req.query["start"]}&end_date=${req.query["end"]}`
+    url = `https://hackatime.hackclub.com/api/v1/authenticated/projects?start_date=${query["start"]}&end_date=${query["end"] || ""}`
 
     let r = await fetch(url, reqData);
     let data = await r.json();

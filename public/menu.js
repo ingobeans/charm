@@ -242,6 +242,7 @@ if (urlParams.get("s")) {
     let session = urlParams.get("s");
     startLoadingAuthor();
     fetch(`/user?s=${session}`).then(handleAuthorDataReq);
+    fetch(`/projects?s=${session}`).then(handleFetchProjectsReq);
 }
 else if (urlParams.get('a') == "1") {
     cookieStore.get("token").then((v) => {

@@ -1,8 +1,10 @@
-const express = require('express');
-var fs = require('fs');
-var path = require('path');
+let express = require('express');
+let fs = require('fs');
+let path = require('path');
+let crypto = require('crypto');
 
 require("./public/shared.js");
+require("./encryption.js");
 
 try {
     require("./config.js");
@@ -29,9 +31,56 @@ for (let file of allowedFiles) {
     });
 }
 
+let algorithm = "aes256";
+function encryptSession(text) {
+    let iv = crypto.randomBytes(8).toString('hex');
+    let cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encrypted = cipher.update(text, 'utf8', 'base64') + cipher.final('base64');
+    return encrypted.replace("+", "_") + iv;
+}
+function decryptSession(entry) {
+    let iv = entry.slice(-16);
+    let encrypted = entry.slice(0, -16).replace("_", "+");
+    let decipher = crypto.createDecipheriv(algorithm, key, iv);
+    let decrypted = decipher.update(encrypted, 'base64', 'utf8') + decipher.final('utf8');
+    return decrypted;
+}
+
 app.get('/', function (req, res) {
+    if (req.query["s"]) {
+        let decrypted = decryptSession(req.query["s"]);
+        let data = JSON.parse(decrypted);
+        console.log(data);
+    }
     root = req.protocol + '://' + req.get('host') + "/";
     res.render("index")
+});
+
+app.get('/create_session', function (req, res) {
+    let sessionText = req.query["s"];
+    if (!sessionText) {
+        res.send({ error: "Missing `s` query parameter." });
+        return;
+    }
+    let session;
+    try {
+        session = JSON.parse(sessionText);
+    } catch (error) {
+        res.send({ error: "Couldn't parse session as JSON. Error: " + error });
+        return;
+    }
+    let allowedKeys = ["token", "start_date", "end_date", "repo", "projects"];
+    for (let [k, v] of Object.entries(session)) {
+        if (!allowedKeys.includes(k)) {
+            res.send({ error: "Unallowed key: " + k });
+            return;
+        }
+    }
+
+    let encrypted = encryptSession(JSON.stringify(session));
+    root = req.protocol + '://' + req.get('host') + "/";
+    res.send({ session: encrypted, link: root + "?s=" + encrypted });
+    return;
 });
 
 app.get('/callback', async (req, res) => {

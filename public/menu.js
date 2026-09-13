@@ -266,8 +266,11 @@ if (urlParams.get("s")) {
     fetch(`/user?s=${session}`).then(handleAuthorDataReq);
     fetch(`/projects?s=${session}`).then(handleFetchProjectsReq);
     startLoadingGraph();
-    console.log("wa");
     fetch(`/data?s=${session}`).then(handleViewProjectsReq);
+
+    if (repo) {
+        repoInputChange();
+    }
 }
 else if (urlParams.get('a') == "1") {
     cookieStore.get("token").then((v) => {

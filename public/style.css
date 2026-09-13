@@ -239,7 +239,7 @@ label,
     background-color: var(--bg);
     padding: 0 15px;
     border-right: 1px solid var(--border-color);
-    width: 300px;
+    width: 331px;
 }
 
 .sidebar>h2 {
@@ -281,6 +281,10 @@ input[type=url] {
     width: calc(100% - 2 * 8px);
 }
 
+input[type=date] {
+    width: 124.5px;
+}
+
 button {
     cursor: pointer;
 }
@@ -290,7 +294,8 @@ button:hover,
     filter: invert(0.2) contrast(1.2);
 }
 
-button:disabled {
+button:disabled,
+input:disabled {
     filter: brightness(1.0) !important;
     color: var(--muted-text-color);
     cursor: not-allowed;

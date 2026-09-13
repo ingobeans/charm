@@ -271,6 +271,10 @@ if (urlParams.get("s")) {
     if (repo) {
         repoInputChange();
     }
+
+    for (let e of [startDateInput, endDateInput, repoInput, tokenInput, oauthButton]) {
+        e.setAttribute("disabled", "");
+    }
 }
 else if (urlParams.get('a') == "1") {
     cookieStore.get("token").then((v) => {

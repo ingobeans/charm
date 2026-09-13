@@ -25,6 +25,18 @@ let repoLink = gd("repo-link");
 let repoError = gd("repo-error");
 let graphSection = gd("graph-section");
 
+let prefillInputs = [
+    [startDateInput, start],
+    [endDateInput, end],
+    [repoInput, repo],
+]
+
+for (let item of prefillInputs) {
+    if (!item[1])
+        continue
+    item[0].value = item[1];
+}
+
 let cachedProjectsData = undefined;
 
 let fetchedGithubRepo = "";

@@ -48,12 +48,18 @@ function decryptSession(entry) {
 
 app.get('/', function (req, res) {
     let projects = [];
+    let prefill = {};
     if (req.query["s"]) {
         try {
             let decrypted = decryptSession(req.query["s"]);
             let data = JSON.parse(decrypted);
             if (data["projects"] && typeof data["projects"] == "object" && data["projects"].length) {
                 projects = data["projects"];
+            }
+            for (let key of ["start", "end", "repo"]) {
+                if (data[key] && typeof data[key] == "string") {
+                    prefill[key] = data[key];
+                }
             }
             console.log(data);
         } catch {
@@ -62,7 +68,7 @@ app.get('/', function (req, res) {
         }
     }
     root = req.protocol + '://' + req.get('host') + "/";
-    res.render("index", { projects: projects })
+    res.render("index", { projects: projects, prefill: prefill })
 });
 
 app.get('/create_session', function (req, res) {

@@ -163,11 +163,30 @@ app.get('/repo', async (req, res) => {
     res.send(commits);
 });
 
+function decodeSession(session) {
+    try {
+        let decrypted = decryptSession(session);
+        let data = JSON.parse(decrypted);
+        return data;
+    } catch {
+        return {};
+    }
+}
+
 app.get("/user", async (req, res) => {
+    let token = req.query["token"];
+    if (req.query["s"]) {
+        let session = decodeSession(req.query["s"]);
+        if (session["token"]) {
+            token = session["token"];
+        }
+    }
+    console.log(token);
+
     let reqData = {
         credentials: "include",
         headers: {
-            "Authorization": "Bearer " + req.query["token"],
+            "Authorization": "Bearer " + token,
         }
     };
     data = {}
@@ -204,6 +223,8 @@ function validateDates(req) {
         }
         for (let char of req.query[field]) {
             if (!allowedDateChars.includes(char)) {
+                console.log(req.query[field]);
+                console.log("req.query[field]");
                 return `Bad ${field} date`;
             }
         }
@@ -234,6 +255,7 @@ app.get("/projects", async (req, res) => {
     let datesError = validateDates(req);
     if (datesError) {
         res.send({ error: datesError });
+        return;
     }
     let reqData = {
         credentials: "include",

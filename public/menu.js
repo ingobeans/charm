@@ -122,14 +122,35 @@ for (let input of document.querySelectorAll("input")) {
     input.addEventListener("input", inputChange);
 }
 
-function fetchAuthorData() {
+function handleAuthorDataReq(res) {
+    res.text().then((value => {
+        let data = JSON.parse(value);
+        console.log(data);
+        authorContainer.classList.remove("loading");
+        authorSlackId.innerText = data["slack_id"] || "";
+        authorGithub.innerText = data["github_username"] || "";
+        authorGithub.href = (data["github_username"]) ? ("https://github.com/" + data["github_username"]) : "";
+        authorGithub.style.visibility = (data["github_username"]) ? "visible" : "hidden";
+        authorPfp.src = data["pfp"] || "/placeholder.png";
+        if (data["username"]) {
+            authorName.innerText = data["username"];
+        } else {
+            authorName.innerHTML = "[unknown]<div class='info-mark'>?<div>The OAuth App that issued the selected token doesn't have the profile scope</div></div>";
+        }
+    }))
+}
+
+function startLoadingAuthor() {
     authorName.innerHTML = "";
     authorSlackId.innerText = "";
     authorGithub.innerText = "";
     authorGithub.style.visibility = "hidden";
     authorContainer.style.display = "";
     authorContainer.classList.add("loading");
+}
 
+function fetchAuthorData() {
+    startLoadingAuthor();
 
     let value = tokenInput.value;
     if (value == "") {
@@ -139,22 +160,7 @@ function fetchAuthorData() {
         authorContainer.style.display = "none";
         return;
     }
-    fetch(`/user?token=${tokenInput.value}`).then((res) => {
-        res.text().then((value => {
-            let data = JSON.parse(value);
-            authorContainer.classList.remove("loading");
-            authorSlackId.innerText = data["slack_id"] || "";
-            authorGithub.innerText = data["github_username"] || "";
-            authorGithub.href = (data["github_username"]) ? ("https://github.com/" + data["github_username"]) : "";
-            authorGithub.style.visibility = (data["github_username"]) ? "visible" : "hidden";
-            authorPfp.src = data["pfp"] || "/placeholder.png";
-            if (data["username"]) {
-                authorName.innerText = data["username"];
-            } else {
-                authorName.innerHTML = "[unknown]<div class='info-mark'>?<div>The OAuth App that issued the selected token doesn't have the profile scope</div></div>";
-            }
-        }))
-    });
+    fetch(`/user?token=${value}`).then(handleAuthorDataReq)
 }
 
 function viewProjects() {
@@ -180,6 +186,32 @@ function viewProjects() {
     });
 }
 
+function handleFetchProjectsReq(res) {
+    res.text().then((value => {
+        let data = JSON.parse(value);
+        console.log(data);
+        if (data["error"]) {
+            projectSelectContainer.innerHTML = `<p class="error">${errorSvg}Error fetching Hackatime projects: ${data["error"]}.</p>`;
+            return;
+        }
+        projectSelectContainer.innerHTML = "";
+        viewBtn.removeAttribute("disabled");
+        for (let project of data["projects"]) {
+            let entry = document.createElement("div");
+            entry.setAttribute("project", project.name);
+            let name = document.createElement("span");
+            let hours = document.createElement("span");
+            hours.className = "hour-count";
+            name.innerText = project.name;
+            hours.innerText = (project.total_seconds / 60 / 60).toFixed(1);
+            entry.appendChild(name);
+            entry.appendChild(hours);
+            entry.onclick = clickProject.bind(null, entry);
+            projectSelectContainer.appendChild(entry);
+        }
+    }))
+}
+
 function fetchProjects() {
     let value = tokenInput.value;
     if (value == "") {
@@ -194,31 +226,7 @@ function fetchProjects() {
         return;
     }
     tokenInputError.innerHTML = "";
-    fetch(`/projects?token=${tokenInput.value}&start=${startDateInput.value}&end=${endDateInput.value}`).then((res) => {
-        res.text().then((value => {
-            let data = JSON.parse(value);
-            console.log(data);
-            if (data["error"]) {
-                projectSelectContainer.innerHTML = `<p class="error">${errorSvg}Error fetching Hackatime projects: ${data["error"]}.</p>`;
-                return;
-            }
-            projectSelectContainer.innerHTML = "";
-            viewBtn.removeAttribute("disabled");
-            for (let project of data["projects"]) {
-                let entry = document.createElement("div");
-                entry.setAttribute("project", project.name);
-                let name = document.createElement("span");
-                let hours = document.createElement("span");
-                hours.className = "hour-count";
-                name.innerText = project.name;
-                hours.innerText = (project.total_seconds / 60 / 60).toFixed(1);
-                entry.appendChild(name);
-                entry.appendChild(hours);
-                entry.onclick = clickProject.bind(null, entry);
-                projectSelectContainer.appendChild(entry);
-            }
-        }))
-    });
+    fetch(`/projects?token=${tokenInput.value}&start=${startDateInput.value}&end=${endDateInput.value}`).then(handleFetchProjectsReq);
 }
 
 startDateInput.addEventListener("input", () => { fetchProjects(); cachedProjectsData = undefined; });
@@ -230,7 +238,12 @@ tokenInput.addEventListener("input", () => {
 });
 
 const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('a') == "1") {
+if (urlParams.get("s")) {
+    let session = urlParams.get("s");
+    startLoadingAuthor();
+    fetch(`/user?s=${session}`).then(handleAuthorDataReq);
+}
+else if (urlParams.get('a') == "1") {
     cookieStore.get("token").then((v) => {
         if (v) {
             oauthButtonClick();

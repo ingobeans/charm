@@ -1,7 +1,6 @@
 let graphYLabels = gd("graph-y-labels");
 let graphCanvas = gd("graph-canvas");
 let hourGraph = gd("hour-graph");
-let hourGraphContainer = gd("hour-graph-container");
 let hourGraphText = gd("hour-graph-text");
 
 let ctx = graphCanvas.getContext("2d");

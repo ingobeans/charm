@@ -24,6 +24,7 @@ let repoCommits = gd("repo-commits");
 let repoLink = gd("repo-link");
 let repoError = gd("repo-error");
 let graphSection = gd("graph-section");
+let hourGraphContainer = gd("hour-graph-container");
 
 let prefillInputs = [
     [startDateInput, start],
@@ -189,6 +190,7 @@ function handleViewProjectsReq(res) {
 function startLoadingGraph() {
     graphSection.classList.add("loading");
     graphSection.style.display = "";
+    hourGraphContainer.style.display = "none";
 }
 
 function viewProjects() {

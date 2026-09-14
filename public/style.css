@@ -9,6 +9,8 @@ html {
 
     --graph-blue: #5980f2;
     --graph-red: #ff454e;
+    --graph-human: #c9f;
+    --graph-ai: #6264f0;
 }
 
 .light-root {
@@ -355,4 +357,18 @@ th {
 
 .table-header>th {
     color: var(--text-color) !important;
+}
+
+#ai-graph {
+    --ai-percent: 10%;
+    width: 100px;
+    aspect-ratio: 1;
+    background-image: conic-gradient(var(--graph-ai) var(--ai-percent), var(--graph-human) var(--ai-percent));
+    border-radius: 100px;
+}
+
+#ai-graph-text {
+    color: var(--graph-human);
+    text-align: center;
+    margin-top: 2px;
 }

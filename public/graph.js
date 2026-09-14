@@ -1,5 +1,9 @@
 let graphYLabels = gd("graph-y-labels");
 let graphCanvas = gd("graph-canvas");
+let aiGraph = gd("ai-graph");
+let aiGraphContainer = gd("ai-graph-container");
+let aiGraphText = gd("ai-graph-text");
+
 let ctx = graphCanvas.getContext("2d");
 
 let horizontalScale = 1.0;
@@ -65,6 +69,8 @@ function renderGraph(heartbeats, projects) {
     if (firstCommitDay && firstCommitDay < firstTime) {
         firstTime = firstCommitDay;
     }
+    aiGraph.style.setProperty("--ai-percent", aiTime / (humanTime + aiTime) * 100 + "%");
+    aiGraphText.innerText = Math.floor(humanTime / (humanTime + aiTime) * 100) + "% human";
     // console.log(humanTime);
     // console.log(aiTime);
 

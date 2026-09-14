@@ -15,7 +15,8 @@ let cachedLastTime = undefined;
 function renderGraph(heartbeats, projects) {
     let registeredTimes = {};
     let aiTime = 0;
-    let humanTime = 0;
+    let codingTime = 0;
+    let timelapseTime = 0;
 
     let minutesTrack = 2;
     let dates = {};
@@ -57,8 +58,10 @@ function renderGraph(heartbeats, projects) {
             }
             if (heartbeat.category == "ai coding") {
                 aiTime += minutesTrack;
+            } else if (heartbeat.category == "timelapsing") {
+                timelapseTime += minutesTrack;
             } else {
-                humanTime += minutesTrack;
+                codingTime += minutesTrack;
             }
             dates[dateValue] = (dates[dateValue] || 0) + minutesTrack;
         }
@@ -69,9 +72,11 @@ function renderGraph(heartbeats, projects) {
     if (firstCommitDay && firstCommitDay < firstTime) {
         firstTime = firstCommitDay;
     }
+    console.log(timelapseTime);
     aiGraphContainer.style.display = "";
-    aiGraph.style.setProperty("--ai-percent", aiTime / (humanTime + aiTime) * 100 + "%");
-    aiGraphText.innerText = Math.floor(humanTime / (humanTime + aiTime) * 100) + "% human";
+    aiGraph.style.setProperty("--ai-percent", aiTime / (codingTime + aiTime + timelapseTime) * 100 + "%");
+    aiGraph.style.setProperty("--timelapse-percent", timelapseTime / (codingTime + aiTime + timelapseTime) * 100 + "%");
+    aiGraphText.innerText = Math.floor((codingTime + timelapseTime) / (codingTime + aiTime + timelapseTime) * 100) + "% human";
     // console.log(humanTime);
     // console.log(aiTime);
 

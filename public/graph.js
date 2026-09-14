@@ -69,6 +69,7 @@ function renderGraph(heartbeats, projects) {
     if (firstCommitDay && firstCommitDay < firstTime) {
         firstTime = firstCommitDay;
     }
+    aiGraphContainer.style.display = "";
     aiGraph.style.setProperty("--ai-percent", aiTime / (humanTime + aiTime) * 100 + "%");
     aiGraphText.innerText = Math.floor(humanTime / (humanTime + aiTime) * 100) + "% human";
     // console.log(humanTime);

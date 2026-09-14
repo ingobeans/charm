@@ -1,8 +1,8 @@
 let graphYLabels = gd("graph-y-labels");
 let graphCanvas = gd("graph-canvas");
-let aiGraph = gd("ai-graph");
-let aiGraphContainer = gd("ai-graph-container");
-let aiGraphText = gd("ai-graph-text");
+let hourGraph = gd("hour-graph");
+let hourGraphContainer = gd("hour-graph-container");
+let hourGraphText = gd("hour-graph-text");
 
 let ctx = graphCanvas.getContext("2d");
 
@@ -70,8 +70,8 @@ function renderGraph(heartbeats, projects) {
         firstTime = firstCommitDay;
     }
     cachedCodingCategories = codingCategories;
-    aiGraphContainer.style.display = "";
-    aiGraphText.innerHTML = "";
+    hourGraphContainer.style.display = "";
+    hourGraphText.innerHTML = "";
     console.log(codingCategories);
 
     keysSorted = Object.keys(codingCategories).sort(function (a, b) { return codingCategories[b] - codingCategories[a] });
@@ -97,7 +97,7 @@ function renderGraph(heartbeats, projects) {
         let element = document.createElement("label");
         let percent = codingCategories[k] / total * 100;
         element.innerText = "⬤ " + percent.toFixed(1) + "% " + k;
-        aiGraphText.appendChild(element);
+        hourGraphText.appendChild(element);
 
         // find color by category (with backups since i dont want to type one for every possibly hb category)
         let color = colors[k];
@@ -115,7 +115,7 @@ function renderGraph(heartbeats, projects) {
         lastPercent = percent;
         gradientStyle += color + " " + percent + "%,";
     }
-    aiGraph.style.backgroundImage = "conic-gradient(" + gradientStyle.substring(0, gradientStyle.length - 1) + ")";
+    hourGraph.style.backgroundImage = "conic-gradient(" + gradientStyle.substring(0, gradientStyle.length - 1) + ")";
 
     // padding
     lastTime += 1;

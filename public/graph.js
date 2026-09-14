@@ -10,6 +10,9 @@ let cachedLastTime = undefined;
 
 function renderGraph(heartbeats, projects) {
     let registeredTimes = {};
+    let aiTime = 0;
+    let humanTime = 0;
+
     let minutesTrack = 2;
     let dates = {};
     let firstTime = undefined;
@@ -48,6 +51,11 @@ function renderGraph(heartbeats, projects) {
             if (lastTime < dateValue) {
                 lastTime = dateValue;
             }
+            if (heartbeat.category == "ai coding") {
+                aiTime += minutesTrack;
+            } else {
+                humanTime += minutesTrack;
+            }
             dates[dateValue] = (dates[dateValue] || 0) + minutesTrack;
         }
 
@@ -57,6 +65,8 @@ function renderGraph(heartbeats, projects) {
     if (firstCommitDay && firstCommitDay < firstTime) {
         firstTime = firstCommitDay;
     }
+    // console.log(humanTime);
+    // console.log(aiTime);
 
     // padding
     lastTime += 1;

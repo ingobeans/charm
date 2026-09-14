@@ -17,9 +17,6 @@
 <body class="grid-bg">
     <script>
         projects = "<%= projects %>".split(",");
-        start = "<%= prefill.start %>";
-        end = "<%= prefill.end %>";
-        repo = "<%= prefill.repo %>";
     </script>
     <button id="darkmode-switch">X</button>
     <div class="main-container">
@@ -30,18 +27,18 @@
                 <div class="input-field-row">
                     <div class="input-field">
                         <label for="start-date-input">START DATE*</label>
-                        <input id="start-date-input" type="date">
+                        <input id="start-date-input" type="date" value="<%= prefill.start %>">
                         <p id="start-date-input-error"></p>
                     </div>
                     <div class="input-field">
                         <label for="end-date-input">END DATE</label>
-                        <input id="end-date-input" type="date">
+                        <input id="end-date-input" type="date" value="<%= prefill.end %>">
                     </div>
                 </div>
 
                 <div class="input-field">
                     <label for="repo-input">GITHUB REPOSITORY</label>
-                    <input autocomplete="off" autocorrect="off" type="url" id="repo-input">
+                    <input autocomplete="off" autocorrect="off" type="url" id="repo-input" value="<%= prefill.repo %>">
                     <p id="repo-input-error"></p>
                 </div>
 

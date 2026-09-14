@@ -26,18 +26,6 @@ let repoError = gd("repo-error");
 let graphSection = gd("graph-section");
 let hourGraphContainer = gd("hour-graph-container");
 
-let prefillInputs = [
-    [startDateInput, start],
-    [endDateInput, end],
-    [repoInput, repo],
-]
-
-for (let item of prefillInputs) {
-    if (!item[1])
-        continue
-    item[0].value = item[1];
-}
-
 let cachedProjectsData = undefined;
 
 let fetchedGithubRepo = "";
@@ -270,7 +258,7 @@ if (urlParams.get("s")) {
     startLoadingGraph();
     fetch(`/data?s=${session}`).then(handleViewProjectsReq);
 
-    if (repo) {
+    if (repoInput.value) {
         repoInputChange();
     }
 

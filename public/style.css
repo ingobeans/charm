@@ -361,16 +361,11 @@ th {
 }
 
 #ai-graph {
-    --ai-percent: 10%;
-    --timelapse-percent: 10%;
-    width: 100px;
     aspect-ratio: 1;
     background-image: conic-gradient(var(--graph-ai) var(--ai-percent), var(--graph-timelapse) var(--ai-percent), var(--graph-timelapse) calc(var(--ai-percent) + var(--timelapse-percent)), var(--graph-human) calc(var(--ai-percent) + var(--timelapse-percent)));
-    border-radius: 100px;
+    border-radius: 100%;
 }
 
-#ai-graph-text {
-    color: var(--graph-human);
-    text-align: center;
-    margin-top: 2px;
+#ai-graph-text>label {
+    margin-top: 4px;
 }

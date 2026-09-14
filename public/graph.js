@@ -11,12 +11,14 @@ let horizontalScale = 1.0;
 let cachedDates = undefined;
 let cachedFirstTime = undefined;
 let cachedLastTime = undefined;
+let cachedCodingCategories = undefined;
 
 function renderGraph(heartbeats, projects) {
     let registeredTimes = {};
     let aiTime = 0;
     let codingTime = 0;
     let timelapseTime = 0;
+    let codingCategories = {};
 
     let minutesTrack = 2;
     let dates = {};
@@ -26,6 +28,7 @@ function renderGraph(heartbeats, projects) {
         dates = cachedDates;
         lastTime = cachedLastTime;
         firstTime = cachedFirstTime;
+        codingCategories = cachedCodingCategories;
     } else if (!heartbeats) {
         return;
     } else {
@@ -56,13 +59,7 @@ function renderGraph(heartbeats, projects) {
             if (lastTime < dateValue) {
                 lastTime = dateValue;
             }
-            if (heartbeat.category == "ai coding") {
-                aiTime += minutesTrack;
-            } else if (heartbeat.category == "timelapsing") {
-                timelapseTime += minutesTrack;
-            } else {
-                codingTime += minutesTrack;
-            }
+            codingCategories[heartbeat.category] = (codingCategories[heartbeat.category] || 0) + minutesTrack;
             dates[dateValue] = (dates[dateValue] || 0) + minutesTrack;
         }
 
@@ -72,13 +69,53 @@ function renderGraph(heartbeats, projects) {
     if (firstCommitDay && firstCommitDay < firstTime) {
         firstTime = firstCommitDay;
     }
-    console.log(timelapseTime);
+    cachedCodingCategories = codingCategories;
     aiGraphContainer.style.display = "";
-    aiGraph.style.setProperty("--ai-percent", aiTime / (codingTime + aiTime + timelapseTime) * 100 + "%");
-    aiGraph.style.setProperty("--timelapse-percent", timelapseTime / (codingTime + aiTime + timelapseTime) * 100 + "%");
-    aiGraphText.innerText = Math.floor((codingTime + timelapseTime) / (codingTime + aiTime + timelapseTime) * 100) + "% human";
-    // console.log(humanTime);
-    // console.log(aiTime);
+    aiGraphText.innerHTML = "";
+    console.log(codingCategories);
+
+    keysSorted = Object.keys(codingCategories).sort(function (a, b) { return codingCategories[b] - codingCategories[a] });
+    let total = 0;
+    for (let [_, v] of Object.entries(codingCategories)) {
+        total += v;
+    }
+
+    let gradientStyle = "";
+    let lastPercent = undefined;
+    let index = 0;
+    let backupColors = ["red", "blue", "orange", "green", "yellow", "white", "lime", "fuchsia"];
+
+    let colors = {
+        "coding": "#c9f",
+        "ai coding": "#f0629dff",
+        "timelapsing": "#3ba5e5",
+        "designing": "#6264f0",
+        "writing docs": "#ffcfa3ff"
+    }
+
+    for (let k of keysSorted) {
+        let element = document.createElement("label");
+        let percent = codingCategories[k] / total * 100;
+        element.innerText = "⬤ " + percent.toFixed(1) + "% " + k;
+        aiGraphText.appendChild(element);
+
+        // find color by category (with backups since i dont want to type one for every possibly hb category)
+        let color = colors[k];
+        if (!color) {
+            color = backupColors[index];
+            index++;
+        }
+
+        // generate the pie chart css
+        element.style.color = color;
+        if (lastPercent) {
+            gradientStyle += color + " " + lastPercent + "%,";
+            percent += lastPercent;
+        }
+        lastPercent = percent;
+        gradientStyle += color + " " + percent + "%,";
+    }
+    aiGraph.style.backgroundImage = "conic-gradient(" + gradientStyle.substring(0, gradientStyle.length - 1) + ")";
 
     // padding
     lastTime += 1;

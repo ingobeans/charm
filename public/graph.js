@@ -15,9 +15,6 @@ let cachedCodingCategories = undefined;
 
 function renderGraph(heartbeats, projects) {
     let registeredTimes = {};
-    let aiTime = 0;
-    let codingTime = 0;
-    let timelapseTime = 0;
     let codingCategories = {};
 
     let minutesTrack = 2;

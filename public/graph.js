@@ -270,8 +270,9 @@ function renderGraph(heartbeats, projects) {
     let h = parseInt(computedStyle.height.replace("px", ""));
     timelineCanvas.width = w
     timelineCanvas.height = h;
-    let timelineHorizontalScale = timelineCanvas.width / maxX;
-    let timelineVerticalScale = timelineCanvas.height / highest;
+    let timelineHorizontalScale = w / maxX;
+    let commitToHourScaling = highest / highestCommitDays;
+    let timelineVerticalScale = h / highest;
 
     timelineCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--timeline-border");
     iterateDates((date, value) => {
@@ -279,6 +280,15 @@ function renderGraph(heartbeats, projects) {
             return;
         }
         let x = getDateX(date - firstTime) * timelineHorizontalScale;
+
+        // if day has less than 10 minutes hackatime,
+        // use commit instead for activity
+        if (value < 10 && Object.keys(commitDays).length > 0) {
+            let commitValue = (commitDays[date] || 0) * commitToHourScaling;
+            if (commitValue > value) {
+                value = commitValue;
+            }
+        }
         let y = (value || 0) * timelineVerticalScale;
         timelineCtx.beginPath();
         timelineCtx.fillRect(x, h - y, 100 * timelineHorizontalScale, value * verticalScale);

@@ -20,6 +20,10 @@ let cachedLastTime = undefined;
 let cachedCodingCategories = undefined;
 let cachedTimelineWidth = undefined;
 
+function parsePx(px) {
+    return parseInt(px.replace("px", ""))
+}
+
 function renderPieChart(data, colors, graphElement, graphTextElement) {
     if (graphTextElement) {
         graphTextElement.innerHTML = "";
@@ -269,8 +273,8 @@ function renderGraph(heartbeats, projects) {
 
     // let timelineRect = timelineContainer.getBoundingClientRect();
     let computedStyle = getComputedStyle(timelineContainer);
-    let w = parseInt(computedStyle.width.replace("px", ""));
-    let h = parseInt(computedStyle.height.replace("px", ""));
+    let w = parsePx(computedStyle.width);
+    let h = parsePx(computedStyle.height);
     timelineCanvas.width = w
     timelineCanvas.height = h;
     let timelineHorizontalScale = w / maxX;
@@ -373,7 +377,15 @@ function mouseMove(event) {
     mouseY = event.clientY;
 
     if (draggingHandle.active) {
-        let x = Math.max(0, Math.min(cachedTimelineWidth, (mouseX - draggingHandle.startX + draggingHandle.startValue)));
+        let minValue = 0;
+        let maxValue = cachedTimelineWidth;
+        if (draggingHandle.isStart) {
+            maxValue = parsePx(handleEnd.style.left);
+        } else {
+            minValue = parsePx(handleStart.style.left);
+        }
+
+        let x = Math.max(minValue, Math.min(maxValue, (mouseX - draggingHandle.startX + draggingHandle.startValue)));
         draggingHandle.element.style.left = x + "px";
     }
 }
@@ -384,6 +396,7 @@ let draggingHandle = {
     startX: 0,
     startY: 0,
     startValue: 0,
+    isStart: false,
 };
 
 // called when a timeline handle is pressed down
@@ -391,9 +404,10 @@ function handleMouseDown(element, startHandle) {
     document.body.style.cursor = "ew-resize";
     draggingHandle.active = true;
     draggingHandle.element = element;
+    draggingHandle.isStart = startHandle;
     draggingHandle.startX = mouseX;
     draggingHandle.startY = mouseY;
-    draggingHandle.startValue = parseInt(element.style.left.replace("px", ""));
+    draggingHandle.startValue = parsePx(element.style.left);
 }
 
 document.body.addEventListener("mouseup", mouseUp);

@@ -4,8 +4,11 @@ let hourGraph = gd("hour-graph");
 let hourGraphText = gd("hour-graph-text");
 let commitTypeGraph = gd("commit-type-graph");
 let commitTypeGraphText = gd("commit-type-graph-text");
+let timelineCanvas = gd("timeline-canvas");
+let timelineContainer = gd("graph-timeline");
 
 let ctx = graphCanvas.getContext("2d");
+let timelineCtx = timelineCanvas.getContext("2d");
 
 let horizontalScale = 1.0;
 
@@ -260,6 +263,26 @@ function renderGraph(heartbeats, projects) {
         element.appendChild(document.createElement("hr"));
         graphYLabels.appendChild(element);
     }
+
+    // let timelineRect = timelineContainer.getBoundingClientRect();
+    let computedStyle = getComputedStyle(timelineContainer);
+    let w = parseInt(computedStyle.width.replace("px", ""));
+    let h = parseInt(computedStyle.height.replace("px", ""));
+    timelineCanvas.width = w
+    timelineCanvas.height = h;
+    let timelineHorizontalScale = timelineCanvas.width / maxX;
+    let timelineVerticalScale = timelineCanvas.height / highest;
+
+    timelineCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--timeline-border");
+    iterateDates((date, value) => {
+        if (!value) {
+            return;
+        }
+        let x = getDateX(date - firstTime) * timelineHorizontalScale;
+        let y = (value || 0) * timelineVerticalScale;
+        timelineCtx.beginPath();
+        timelineCtx.fillRect(x, h - y, 100 * timelineHorizontalScale, value * verticalScale);
+    });
 }
 
 let commitDays = {};

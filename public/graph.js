@@ -367,6 +367,13 @@ function parseCommits(commits) {
     renderGraph();
 }
 
+// normally floors numbers, except if theyre very close to the upper digit.
+// ex rounds 23.9999999999999996 -> 24
+// 23.7 would still round downwards
+function roundVeryClose(v) {
+    return Math.floor(Math.round(v * 100) / 100)
+}
+
 let mouseX = 0;
 let mouseY = 0;
 

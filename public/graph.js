@@ -394,10 +394,14 @@ function mouseMove(event) {
 
         let dayWidth = 100 * cachedTimelineHorizontalScale;
 
-        let x = Math.max(minValue, Math.min(maxValue, (mouseX - draggingHandle.startX + draggingHandle.startValue)));
+        let x = (mouseX - draggingHandle.startX + draggingHandle.startValue);
 
         // snap to nearest day
         x = Math.round(x / (dayWidth)) * dayWidth;
+
+        // clamp to bounds
+        x = Math.max(minValue, Math.min(maxValue, x));
+
         draggingHandle.element.style.left = x + "px";
 
         let otherPos = parsePx((draggingHandle.isStart ? handleEnd : handleStart).style.left);

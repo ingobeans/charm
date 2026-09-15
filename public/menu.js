@@ -193,12 +193,13 @@ function viewProjects() {
     fetch(`/data?token=${tokenInput.value}&start=${startDateInput.value}&end=${endDateInput.value}`).then(handleViewProjectsReq);
 }
 
+let cachedProjects;
 function handleFetchProjectsReq(res) {
     oldProjects = projects;
     projects = [];
     res.text().then((value => {
         let data = JSON.parse(value);
-        console.log(data);
+        cachedProjects = data;
         if (data["error"]) {
             projectSelectContainer.innerHTML = `<p class="error">${errorSvg}Error fetching Hackatime projects: ${data["error"]}.</p>`;
             return;

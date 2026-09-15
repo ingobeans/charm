@@ -390,7 +390,6 @@ th {
     --handle-height: 40px;
     --handle-width: 7px;
     width: calc(100% - var(--handle-width) * 2);
-    background-color: var(--timeline-bg);
     border: solid 1px var(--timeline-border);
     position: relative;
     height: var(--timeline-height);
@@ -409,6 +408,14 @@ th {
 
 #handle-start {
     transform: translateX(calc(var(--handle-width) * -1));
+}
+
+#timeline-area-filled {
+    width: 400px;
+    position: absolute;
+    height: var(--timeline-height);
+    background-color: var(--timeline-bg);
+    top: 0;
 }
 
 #handle-end {

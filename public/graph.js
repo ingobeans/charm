@@ -8,6 +8,7 @@ let timelineCanvas = gd("timeline-canvas");
 let timelineContainer = gd("graph-timeline");
 let handleStart = gd("handle-start");
 let handleEnd = gd("handle-end");
+let timelineAreaFilled = gd("timeline-area-filled");
 
 let ctx = graphCanvas.getContext("2d");
 let timelineCtx = timelineCanvas.getContext("2d");
@@ -304,6 +305,7 @@ function renderGraph(heartbeats, projects) {
     });
     handleStart.style.left = "0px";
     handleEnd.style.left = w + "px";
+    timelineAreaFilled.style.width = w + "px";
     cachedTimelineWidth = w;
 }
 
@@ -387,10 +389,18 @@ function mouseMove(event) {
             minValue = parsePx(handleStart.style.left);
         }
 
+        let dayWidth = 100 * cachedTimelineHorizontalScale;
+
         let x = Math.max(minValue, Math.min(maxValue, (mouseX - draggingHandle.startX + draggingHandle.startValue)));
+
         // snap to nearest day
-        x = Math.round(x / (100 * cachedTimelineHorizontalScale)) * 100 * cachedTimelineHorizontalScale;
+        x = Math.round(x / (dayWidth)) * dayWidth;
         draggingHandle.element.style.left = x + "px";
+
+        let otherPos = parsePx((draggingHandle.isStart ? handleEnd : handleStart).style.left);
+        let delta = Math.abs(x - otherPos);
+        timelineAreaFilled.style.width = delta + "px";
+        timelineAreaFilled.style.left = handleStart.style.left;
     }
 }
 

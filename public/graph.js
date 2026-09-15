@@ -19,6 +19,7 @@ let cachedFirstTime = undefined;
 let cachedLastTime = undefined;
 let cachedCodingCategories = undefined;
 let cachedTimelineWidth = undefined;
+let cachedTimelineHorizontalScale = undefined;
 
 function parsePx(px) {
     return parseInt(px.replace("px", ""))
@@ -280,6 +281,7 @@ function renderGraph(heartbeats, projects) {
     let timelineHorizontalScale = w / maxX;
     let commitToHourScaling = highest / highestCommitDays;
     let timelineVerticalScale = h / highest;
+    cachedTimelineHorizontalScale = timelineHorizontalScale;
 
     timelineCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--timeline-border");
     iterateDates((date, value) => {
@@ -386,6 +388,8 @@ function mouseMove(event) {
         }
 
         let x = Math.max(minValue, Math.min(maxValue, (mouseX - draggingHandle.startX + draggingHandle.startValue)));
+        // snap to nearest day
+        x = Math.round(x / (100 * cachedTimelineHorizontalScale)) * 100 * cachedTimelineHorizontalScale;
         draggingHandle.element.style.left = x + "px";
     }
 }

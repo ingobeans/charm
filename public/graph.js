@@ -279,7 +279,10 @@ function renderGraph(heartbeats, projects) {
     let h = parsePx(computedStyle.height);
     timelineCanvas.width = w
     timelineCanvas.height = h;
-    let timelineHorizontalScale = w / maxX;
+
+    // let timelineHorizontalScale = w / maxX;
+    let timelineHorizontalScale = horizontalScale; // use same scale for both graphs, only one set of x-labels needed
+
     let commitToHourScaling = highest / highestCommitDays;
     let timelineVerticalScale = h / highest;
     cachedTimelineHorizontalScale = timelineHorizontalScale;

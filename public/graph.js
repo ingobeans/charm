@@ -6,6 +6,8 @@ let commitTypeGraph = gd("commit-type-graph");
 let commitTypeGraphText = gd("commit-type-graph-text");
 let timelineCanvas = gd("timeline-canvas");
 let timelineContainer = gd("graph-timeline");
+let handleStart = gd("handle-start");
+let handleEnd = gd("handle-end");
 
 let ctx = graphCanvas.getContext("2d");
 let timelineCtx = timelineCanvas.getContext("2d");
@@ -16,6 +18,7 @@ let cachedDates = undefined;
 let cachedFirstTime = undefined;
 let cachedLastTime = undefined;
 let cachedCodingCategories = undefined;
+let cachedTimelineWidth = undefined;
 
 function renderPieChart(data, colors, graphElement, graphTextElement) {
     if (graphTextElement) {
@@ -293,6 +296,9 @@ function renderGraph(heartbeats, projects) {
         timelineCtx.beginPath();
         timelineCtx.fillRect(x, h - y, 100 * timelineHorizontalScale, value * verticalScale);
     });
+    handleStart.style.left = "0px";
+    handleEnd.style.left = w + "px";
+    cachedTimelineWidth = w;
 }
 
 let commitDays = {};
@@ -349,3 +355,46 @@ function parseCommits(commits) {
     commitTypeGraphContainer.style.display = "";
     renderGraph();
 }
+
+let mouseX = 0;
+let mouseY = 0;
+
+// called when mouse is released anywhere
+function mouseUp(event) {
+    if (draggingHandle.active) {
+        draggingHandle.active = false;
+    }
+    document.body.style.cursor = "";
+}
+
+// called when mouse is moved
+function mouseMove(event) {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+
+    if (draggingHandle.active) {
+        let x = Math.max(0, Math.min(cachedTimelineWidth, (mouseX - draggingHandle.startX + draggingHandle.startValue)));
+        draggingHandle.element.style.left = x + "px";
+    }
+}
+
+let draggingHandle = {
+    active: false,
+    element: undefined,
+    startX: 0,
+    startY: 0,
+    startValue: 0,
+};
+
+// called when a timeline handle is pressed down
+function handleMouseDown(element, startHandle) {
+    document.body.style.cursor = "ew-resize";
+    draggingHandle.active = true;
+    draggingHandle.element = element;
+    draggingHandle.startX = mouseX;
+    draggingHandle.startY = mouseY;
+    draggingHandle.startValue = parseInt(element.style.left.replace("px", ""));
+}
+
+document.body.addEventListener("mouseup", mouseUp);
+document.body.addEventListener("mousemove", mouseMove);

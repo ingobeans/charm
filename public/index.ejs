@@ -107,8 +107,8 @@
                 </div>
                 <div id="graph-timeline">
                     <canvas width="0" height="0" id="timeline-canvas"></canvas>
-                    <div id="handle-start" class="graph-timeline-handle no-drag"></div>
-                    <div id="handle-end" class="graph-timeline-handle no-drag"></div>
+                    <div id="handle-start" class="graph-timeline-handle no-drag" onmousedown="handleMouseDown(this,true)"></div>
+                    <div id="handle-end" class="graph-timeline-handle no-drag" onmousedown="handleMouseDown(this,false)"></div>
                 </div>
             </div>
             <div class="flex-row fit-height">

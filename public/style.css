@@ -24,7 +24,7 @@ html {
 body {
     background-color: var(--darker-bg);
     color: var(--text-color);
-    font-family: "Verdana";
+    font-family: "Verdana", Arial;
     --sidebar-width: 300px;
     margin: 0;
     scrollbar-color: gray transparent;

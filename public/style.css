@@ -12,6 +12,9 @@ html {
     --graph-human: #c9f;
     --graph-ai: #6264f0;
     --graph-timelapse: #3ba5e5;
+
+    --timeline-bg: #0070ff3b;
+    --timeline-border: #0070ff;
 }
 
 .light-root {
@@ -376,4 +379,38 @@ th {
 
 .fit-height>div {
     height: fit-content;
+}
+
+.loading #graph-timeline {
+    display: none;
+}
+
+#graph-timeline {
+    --timeline-height: 30px;
+    --handle-height: 40px;
+    --handle-width: 7px;
+    width: calc(100% - var(--handle-width) * 2);
+    background-color: var(--timeline-bg);
+    border: solid 1px var(--timeline-border);
+    position: relative;
+    height: var(--timeline-height);
+    margin-left: var(--handle-width);
+}
+
+.graph-timeline-handle {
+    left: 0px;
+    width: var(--handle-width);
+    height: var(--handle-height);
+    position: absolute;
+    top: calc((var(--timeline-height) - var(--handle-height)) / 2);
+    background-color: var(--timeline-border);
+    cursor: ew-resize;
+}
+
+#handle-start {
+    transform: translateX(calc(var(--handle-width) * -1));
+}
+
+#handle-end {
+    left: 100%;
 }

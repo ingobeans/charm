@@ -360,12 +360,16 @@ th {
     color: var(--text-color) !important;
 }
 
-#hour-graph {
+.pie-chart {
     aspect-ratio: 1;
     background-image: conic-gradient(var(--graph-ai) var(--ai-percent), var(--graph-timelapse) var(--ai-percent), var(--graph-timelapse) calc(var(--ai-percent) + var(--timelapse-percent)), var(--graph-human) calc(var(--ai-percent) + var(--timelapse-percent)));
     border-radius: 100%;
 }
 
-#hour-graph-text>label {
+.pie-chart-text>label {
     margin-top: 4px;
+}
+
+.fit-height>div {
+    height: fit-content;
 }

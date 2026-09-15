@@ -25,6 +25,7 @@ let repoLink = gd("repo-link");
 let repoError = gd("repo-error");
 let graphSection = gd("graph-section");
 let hourGraphContainer = gd("hour-graph-container");
+let commitTypeGraphContainer = gd("commit-type-graph-container");
 
 let cachedProjectsData = undefined;
 

@@ -107,10 +107,17 @@
                     <canvas width="0" height="0" id="graph-canvas"></canvas>
                 </div>
             </div>
-            <div class="inspect-section" id="hour-graph-container" style="display: none;">
-                <label>HOURS</label>
-                <div id="hour-graph"></div>
-                <div id="hour-graph-text"></div>
+            <div class="flex-row fit-height">
+                <div class="inspect-section" id="hour-graph-container" style="display: none;">
+                    <label>HOURS</label>
+                    <div id="hour-graph" class="pie-chart"></div>
+                    <div id="hour-graph-text" class="pie-chart-text"></div>
+                </div>
+                <div class="inspect-section" id="commit-type-graph-container" style="display: none;">
+                    <label>COMMITS</label>
+                    <div id="commit-type-graph" class="pie-chart"></div>
+                    <div id="commit-type-graph-text" class="pie-chart-text"></div>
+                </div>
             </div>
         </div>
     </div>

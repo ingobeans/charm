@@ -2,6 +2,8 @@ let graphYLabels = gd("graph-y-labels");
 let graphCanvas = gd("graph-canvas");
 let hourGraph = gd("hour-graph");
 let hourGraphText = gd("hour-graph-text");
+let commitTypeGraph = gd("commit-type-graph");
+let commitTypeGraphText = gd("commit-type-graph-text");
 
 let ctx = graphCanvas.getContext("2d");
 
@@ -11,6 +13,54 @@ let cachedDates = undefined;
 let cachedFirstTime = undefined;
 let cachedLastTime = undefined;
 let cachedCodingCategories = undefined;
+
+function renderPieChart(data, colors, graphElement, graphTextElement) {
+    if (graphTextElement) {
+        graphTextElement.innerHTML = "";
+    }
+    console.log(data);
+    keysSorted = Object.keys(data).sort(function (a, b) { return data[b] - data[a] });
+    let total = 0;
+    for (let [_, v] of Object.entries(data)) {
+        total += v;
+    }
+
+    let gradientStyle = "";
+    let lastPercent = undefined;
+    let index = 0;
+    let backupColors = ["red", "blue", "orange", "green", "yellow", "white", "lime", "fuchsia"];
+
+    for (let k of keysSorted) {
+        let percent = data[k] / total * 100;
+
+        let element = undefined;
+        if (graphTextElement) {
+            element = document.createElement("label");
+            element.innerText = "⬤ " + percent.toFixed(1) + "% " + k;
+            graphTextElement.appendChild(element);
+        }
+
+        // find color by category (with backups since i dont want to type one for every possibly hb category)
+        let color = colors[k];
+        if (!color) {
+            color = backupColors[index];
+            index++;
+        }
+
+        // generate the pie chart css
+        if (element) {
+            element.style.color = color;
+        }
+
+        if (lastPercent) {
+            gradientStyle += color + " " + lastPercent + "%,";
+            percent += lastPercent;
+        }
+        lastPercent = percent;
+        gradientStyle += color + " " + percent + "%,";
+    }
+    graphElement.style.backgroundImage = "conic-gradient(" + gradientStyle.substring(0, gradientStyle.length - 1) + ")";
+}
 
 function renderGraph(heartbeats, projects) {
     let registeredTimes = {};
@@ -67,19 +117,6 @@ function renderGraph(heartbeats, projects) {
     }
     cachedCodingCategories = codingCategories;
     hourGraphContainer.style.display = "";
-    hourGraphText.innerHTML = "";
-    console.log(codingCategories);
-
-    keysSorted = Object.keys(codingCategories).sort(function (a, b) { return codingCategories[b] - codingCategories[a] });
-    let total = 0;
-    for (let [_, v] of Object.entries(codingCategories)) {
-        total += v;
-    }
-
-    let gradientStyle = "";
-    let lastPercent = undefined;
-    let index = 0;
-    let backupColors = ["red", "blue", "orange", "green", "yellow", "white", "lime", "fuchsia"];
 
     let colors = {
         "coding": "#c9f",
@@ -88,30 +125,7 @@ function renderGraph(heartbeats, projects) {
         "designing": "#6264f0",
         "writing docs": "#ffcfa3ff"
     }
-
-    for (let k of keysSorted) {
-        let element = document.createElement("label");
-        let percent = codingCategories[k] / total * 100;
-        element.innerText = "⬤ " + percent.toFixed(1) + "% " + k;
-        hourGraphText.appendChild(element);
-
-        // find color by category (with backups since i dont want to type one for every possibly hb category)
-        let color = colors[k];
-        if (!color) {
-            color = backupColors[index];
-            index++;
-        }
-
-        // generate the pie chart css
-        element.style.color = color;
-        if (lastPercent) {
-            gradientStyle += color + " " + lastPercent + "%,";
-            percent += lastPercent;
-        }
-        lastPercent = percent;
-        gradientStyle += color + " " + percent + "%,";
-    }
-    hourGraph.style.backgroundImage = "conic-gradient(" + gradientStyle.substring(0, gradientStyle.length - 1) + ")";
+    renderPieChart(codingCategories, colors, hourGraph, hourGraphText);
 
     // padding
     lastTime += 1;
@@ -254,13 +268,16 @@ let firstCommitDay = undefined;
 let commitCount = 0;
 let commitError = undefined;
 let cachedCommits = undefined;
+let commitTypes = {};
 function parseCommits(commits) {
+    commitTypeGraphContainer.style.display = "none";
     commitDays = {};
     highestCommitDays = 0;
     firstCommitDay = undefined;
     commitCount = 0;
     commitError = undefined;
     cachedCommits = commits;
+    commitTypes = {};
 
     for (let commit of commits) {
         if (!commit["commit"]) {
@@ -273,6 +290,11 @@ function parseCommits(commits) {
             }
             return;
         }
+        let commitType = "regular";
+        if (commit.committer.login == "web-flow") {
+            commitType = "web upload";
+        }
+        commitTypes[commitType] = (commitTypes[commitType] || 0) + 1;
         let date = commit.commit.author.date;
         commitCount++;
         let dateObj = new Date(date);
@@ -285,5 +307,12 @@ function parseCommits(commits) {
             firstCommitDay = dateValue;
         }
     }
+
+    let colors = {
+        "regular": "#62cdf6",
+        "web upload": "#f6da6a"
+    }
+    renderPieChart(commitTypes, colors, commitTypeGraph, commitTypeGraphText);
+    commitTypeGraphContainer.style.display = "";
     renderGraph();
 }

@@ -71,6 +71,7 @@ app.get('/', function (req, res) {
     res.render("index", { projects: projects, prefill: prefill })
 });
 
+// todo: replace with POST and json body, for csrf reasons perhaps? slight code smell
 app.get('/create_session', function (req, res) {
     let sessionText = req.query["s"];
     if (!sessionText) {

@@ -370,6 +370,10 @@ th {
     margin-top: 4px;
 }
 
+.light-root .pie-chart-text>label {
+    filter: brightness(0.8) saturate(2);
+}
+
 .fit-height>div {
     height: fit-content;
 }

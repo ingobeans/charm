@@ -21,7 +21,7 @@ a key difference is also that it uses Hackatime tokens rather than user IDs, mea
 
 ## API
 
-POST `/create_session?s=<DATA>`
+GET `/create_session?s=<DATA>`
 
 used to create a session. should be sent from your backend.
 

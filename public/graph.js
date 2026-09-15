@@ -386,21 +386,27 @@ function mouseMove(event) {
     if (draggingHandle.active) {
         let minValue = 0;
         let maxValue = cachedTimelineWidth;
-        if (draggingHandle.isStart) {
-            maxValue = parsePx(handleEnd.style.left);
-        } else {
-            minValue = parsePx(handleStart.style.left);
-        }
-
         let dayWidth = 100 * cachedTimelineHorizontalScale;
 
-        let x = (mouseX - draggingHandle.startX + draggingHandle.startValue);
+        let minDays = 2;
+
+        if (draggingHandle.isStart) {
+            maxValue = parsePx(handleEnd.style.left) - dayWidth * minDays;
+        } else {
+            minValue = parsePx(handleStart.style.left) + dayWidth * minDays;
+        }
+
+
+        let x = mouseX - draggingHandle.startX + draggingHandle.startValue;
+
+        // clamped min value
+        x = Math.max(minValue, x);
 
         // snap to nearest day
         x = Math.round(x / (dayWidth)) * dayWidth;
 
-        // clamp to bounds
-        x = Math.max(minValue, Math.min(maxValue, x));
+        // clamped max value (done after snapping)
+        x = Math.min(maxValue, x);
 
         draggingHandle.element.style.left = x + "px";
 

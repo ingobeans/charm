@@ -253,12 +253,14 @@ let highestCommitDays = 0;
 let firstCommitDay = undefined;
 let commitCount = 0;
 let commitError = undefined;
+let cachedCommits = undefined;
 function parseCommits(commits) {
     commitDays = {};
     highestCommitDays = 0;
     firstCommitDay = undefined;
     commitCount = 0;
     commitError = undefined;
+    cachedCommits = commits;
 
     for (let commit of commits) {
         if (!commit["commit"]) {

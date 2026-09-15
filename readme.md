@@ -31,3 +31,5 @@ the `s` query parameter should be a JSON object containing the following fields:
 * `end`: date string - End date to fetch information from (YYYY-MM-DD)
 * `repo`: url string - URL of GitHub repository. 
 * `projects`: string[] - list of string names of Hackatime projects to view
+
+returns a JSON object containing a link to the reviewer page for this session. valid forever.

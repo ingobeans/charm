@@ -34,7 +34,6 @@ function renderPieChart(data, colors, graphElement, graphTextElement) {
     if (graphTextElement) {
         graphTextElement.innerHTML = "";
     }
-    console.log(data);
     keysSorted = Object.keys(data).sort(function (a, b) { return data[b] - data[a] });
     let total = 0;
     for (let [_, v] of Object.entries(data)) {
@@ -160,8 +159,6 @@ function renderGraph(heartbeats, projects) {
 
 
     cachedDates = dates;
-    console.log("Finished parsing heartbeat data");
-    console.log(dates);
     let dateAmt = 0;
     let highest = 0;
     for (let [k, v] of Object.entries(dates)) {
@@ -326,6 +323,13 @@ function renderGraph(heartbeats, projects) {
         timelineCtx.beginPath();
         timelineCtx.fillRect(x, h - y, 100 * timelineHorizontalScale, value * verticalScale);
     }, unoffsetedFirstTime, unoffsetedLastTime);
+
+    if (!handleStart.style.left) {
+        timelineAreaFilled.style.width = w + "px";
+        handleStart.style.left = "0px";
+    }
+    if (!handleEnd.style.left) { handleEnd.style.left = w + "px"; }
+
     cachedMaxDays = unoffsetedMaxX / 100;
     cachedTimelineWidth = w;
 }

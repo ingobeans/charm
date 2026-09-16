@@ -21,6 +21,10 @@ let cachedLastTime = undefined;
 let cachedCodingCategories = undefined;
 let cachedTimelineWidth = undefined;
 let cachedTimelineHorizontalScale = undefined;
+let cachedMaxDays = undefined;
+
+let startOffset = undefined;
+let endOffset = undefined;
 
 function parsePx(px) {
     return parseInt(px.replace("px", ""))
@@ -143,6 +147,18 @@ function renderGraph(heartbeats, projects) {
     lastTime += 1;
     firstTime -= 1;
 
+    let unoffsetedFirstTime = firstTime;
+    let unoffsetedLastTime = lastTime;
+
+    // apply offsets
+    if (startOffset) {
+        firstTime += startOffset;
+    }
+    if (endOffset) {
+        lastTime -= endOffset;
+    }
+
+
     cachedDates = dates;
     console.log("Finished parsing heartbeat data");
     console.log(dates);
@@ -170,17 +186,16 @@ function renderGraph(heartbeats, projects) {
     function getDateX(date) {
         return date * 100;
     }
-    function iterateDates(callback) {
+    function iterateDates(callback, first = firstTime, last = lastTime) {
         let index = 0;
         let dateCount = 0;
         while (true) {
-            let date = firstTime + 1 * index;
+            let date = first + 1 * index;
             let value = dates[date];
             if (value != undefined) {
                 dateCount++;
             }
-            if (date > lastTime) {
-                console.warn("Something went wrong loading dates. Soft failing");
+            if (date > last) {
                 break;
             }
 
@@ -281,7 +296,9 @@ function renderGraph(heartbeats, projects) {
     timelineCanvas.height = h;
 
     // let timelineHorizontalScale = w / maxX;
-    let timelineHorizontalScale = horizontalScale; // use same scale for both graphs, only one set of x-labels needed
+
+    let unoffsetedMaxX = getDateX(unoffsetedLastTime - unoffsetedFirstTime);
+    let timelineHorizontalScale = (800 - horizontalPadding) / unoffsetedMaxX;
 
     let commitToHourScaling = highest / highestCommitDays;
     let timelineVerticalScale = h / highest;
@@ -292,7 +309,7 @@ function renderGraph(heartbeats, projects) {
         if (!value) {
             return;
         }
-        let x = getDateX(date - firstTime) * timelineHorizontalScale;
+        let x = getDateX(date - unoffsetedFirstTime) * timelineHorizontalScale;
 
         // if day has less than 10 minutes hackatime,
         // use commit instead for activity
@@ -305,10 +322,13 @@ function renderGraph(heartbeats, projects) {
         let y = (value || 0) * timelineVerticalScale;
         timelineCtx.beginPath();
         timelineCtx.fillRect(x, h - y, 100 * timelineHorizontalScale, value * verticalScale);
-    });
-    handleStart.style.left = "0px";
-    handleEnd.style.left = w + "px";
-    timelineAreaFilled.style.width = w + "px";
+    }, unoffsetedFirstTime, unoffsetedLastTime);
+    if (!draggingHandle.active) {
+        handleStart.style.left = "0px";
+        handleEnd.style.left = w + "px";
+        timelineAreaFilled.style.width = w + "px";
+    }
+    cachedMaxDays = unoffsetedMaxX / 100;
     cachedTimelineWidth = w;
 }
 
@@ -371,7 +391,7 @@ function parseCommits(commits) {
 // ex rounds 23.9999999999999996 -> 24
 // 23.7 would still round downwards
 function roundVeryClose(v) {
-    return Math.floor(Math.round(v * 100) / 100)
+    return Math.floor(Math.round(v * 10) / 10)
 }
 
 let mouseX = 0;
@@ -421,6 +441,20 @@ function mouseMove(event) {
         let delta = Math.abs(x - otherPos);
         timelineAreaFilled.style.width = delta + "px";
         timelineAreaFilled.style.left = handleStart.style.left;
+
+        let value = roundVeryClose(parsePx(draggingHandle.element.style.left) / (100 * cachedTimelineHorizontalScale));
+        let oldStart = startOffset;
+        let oldEnd = endOffset;
+        if (draggingHandle.isStart) {
+            startOffset = value;
+        } else {
+            value = cachedMaxDays + 1 - value;
+            endOffset = value;
+        }
+
+        if (oldStart != startOffset || oldEnd != endOffset)
+            renderGraph();
+
     }
 }
 

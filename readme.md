@@ -1,6 +1,6 @@
 # Charm
 
-![Screenshot](https://cdn.hackclub.com/01a0a5bd-318d-7584-81af-416924a6b3d5/paste-1789487036010.png)
+![Screenshot](https://cdn.hackclub.com/01a0ab44-4da1-75d0-9be0-03f02889b874/paste-1789579774686.png)
 
 charm is a WIP Hack Club reviewer tool i'm working on !
 
@@ -12,6 +12,7 @@ a key difference is also that it uses Hackatime tokens rather than user IDs, mea
 ## Currently Implemented Features
 
 * Plot Hackatime hours and commit counts
+* Selectable timeline
 * Hour breakdown (i.e. ai-coding rates, timelapses, etc)
 * Commit type breakdown (i.e. web uploads)
 * General author and repository information

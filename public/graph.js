@@ -289,16 +289,19 @@ function renderGraph(heartbeats, projects) {
     }
 
     // let timelineRect = timelineContainer.getBoundingClientRect();
+    timelineContainer.style.width = "";
     let computedStyle = getComputedStyle(timelineContainer);
-    let w = parsePx(computedStyle.width);
+    let unoffsetedMaxX = getDateX(unoffsetedLastTime - unoffsetedFirstTime);
+    let timelineHorizontalScale = 800 / unoffsetedMaxX;
+
+    let w = 800;
     let h = parsePx(computedStyle.height);
+
+    w = Math.floor(w / (100 * timelineHorizontalScale)) * (100 * timelineHorizontalScale);
     timelineCanvas.width = w
     timelineCanvas.height = h;
 
-    // let timelineHorizontalScale = w / maxX;
-
-    let unoffsetedMaxX = getDateX(unoffsetedLastTime - unoffsetedFirstTime);
-    let timelineHorizontalScale = (800 - horizontalPadding) / unoffsetedMaxX;
+    timelineContainer.style.width = w + "px";
 
     let commitToHourScaling = highest / highestCommitDays;
     let timelineVerticalScale = h / highest;
@@ -323,11 +326,6 @@ function renderGraph(heartbeats, projects) {
         timelineCtx.beginPath();
         timelineCtx.fillRect(x, h - y, 100 * timelineHorizontalScale, value * verticalScale);
     }, unoffsetedFirstTime, unoffsetedLastTime);
-    if (!draggingHandle.active) {
-        handleStart.style.left = "0px";
-        handleEnd.style.left = w + "px";
-        timelineAreaFilled.style.width = w + "px";
-    }
     cachedMaxDays = unoffsetedMaxX / 100;
     cachedTimelineWidth = w;
 }

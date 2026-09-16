@@ -118,6 +118,7 @@ label,
     max-width: 800px;
     overflow: auto;
     padding-bottom: 15px;
+    margin-top: 1lh;
 }
 
 #graph-y-labels {

@@ -124,6 +124,7 @@ label,
 #graph-y-labels {
     height: 0;
     position: relative;
+    margin-top: 1lh;
 }
 
 #graph-y-labels>label {

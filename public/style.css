@@ -235,7 +235,12 @@ label,
     overflow-y: auto;
     max-height: 60px;
     width: 100%;
-    padding-right: 10px;
+}
+
+@-moz-document url-prefix() {
+    #previous-submissions-scroll {
+        padding-right: 10px;
+    }
 }
 
 .icon-svg {

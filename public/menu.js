@@ -14,11 +14,9 @@ let authorPfp = gd("author-pfp");
 let authorSlackId = gd("author-slackid");
 let authorGithub = gd("author-github");
 let authorContainer = gd("author-container");
-let authorLoader = gd("author-loader");
 let oauthButton = gd("oauth-button");
 let repoInput = gd("repo-input");
 let repoContainer = gd("repo-container");
-let repoLoader = gd("repo-loader");
 let repoName = gd("repo-name");
 let repoCommits = gd("repo-commits");
 let repoLink = gd("repo-link");
@@ -26,6 +24,8 @@ let repoError = gd("repo-error");
 let graphSection = gd("graph-section");
 let hourGraphContainer = gd("hour-graph-container");
 let commitTypeGraphContainer = gd("commit-type-graph-container");
+let previousSubmissionsContainer = gd("previous-submissions-container");
+let previousSubmissionsScroll = gd("previous-submissions-scroll");
 
 let cachedProjectsData = undefined;
 
@@ -39,6 +39,26 @@ function count(query) {
     return i;
 }
 
+async function fetchPreviousSubmissions(url) {
+    console.log(url);
+    apiUrl = "/lookup_submissions?url=" + url;
+    let r = await fetch(apiUrl);
+    let b = await r.json();
+
+    if (b["error"]) {
+        return
+    }
+    previousSubmissionsScroll.innerHTML = "";
+    for (let item of b["submissions"]) {
+        let element = document.createElement("p");
+        element.classList.add("warn");
+        element.innerHTML = errorSvg + item["yswsName"];
+        previousSubmissionsScroll.appendChild(element);
+    }
+
+    previousSubmissionsContainer.style.display = "";
+}
+
 async function fetchRepo(url) {
     if (url == fetchedGithubRepo)
         return;
@@ -48,6 +68,9 @@ async function fetchRepo(url) {
     }
 
     fetchedGithubRepo = url;
+
+    previousSubmissionsContainer.style.display = "none";
+    fetchPreviousSubmissions(url);
 
     repoContainer.style.display = "";
     repoContainer.classList.add("loading");

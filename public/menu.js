@@ -94,17 +94,33 @@ async function fetchRepo(url) {
     repoContainer.classList.remove("loading");
 }
 
+let lastRepoInput = 0;
+let lastRepoInputWasNonEmpty = false;
 function repoInputChange() {
+    let isNonempty = repoInput.value != "";
+    let isValid = validateUrl(repoInput.value)["owner"] != undefined;
+
+    if (isNonempty && !lastRepoInputWasNonEmpty) {
+        lastRepoInputWasNonEmpty = isNonempty;
+        if (isValid)
+            fetchRepoInput();
+        return
+    }
+    lastRepoInputWasNonEmpty = isNonempty;
+    if (!isValid)
+        return;
+
+    let now = Date.now();
     setTimeout(((v) => {
-        if (v == repoInput.value) {
+        if (v == lastRepoInput) {
             fetchRepoInput();
         }
-    }).bind(null, repoInput.value)
+    }).bind(null, now)
         , 1000);
+    lastRepoInput = now;
 }
 
 function fetchRepoInput() {
-    console.log("wa");
     let result = validateUrl(repoInput.value);
     if (result["owner"]) {
         fetchRepo(repoInput.value);

@@ -71,6 +71,17 @@ app.get('/', function (req, res) {
     res.render("index", { projects: projects, prefill: prefill })
 });
 
+app.get("/lookup_submissions", async function (req, res) {
+    let url = req.query["url"];
+    let result = validateUrl(url);
+    if (!result["owner"]) {
+        res.send({ error: result });
+        return;
+    }
+    let r = await fetch("https://manifest.hackclub.com/api/lookup?codeUrl=" + url);
+    res.send(await r.json());
+});
+
 // todo: replace with POST and json body, for csrf reasons perhaps? slight code smell
 app.get('/create_session', function (req, res) {
     let sessionText = req.query["s"];

@@ -226,10 +226,16 @@ label,
     color: orange;
 }
 
+.warn>label {
+    display: block;
+    text-align: right;
+}
+
 #previous-submissions-scroll {
     overflow-y: auto;
     max-height: 60px;
     width: 100%;
+    padding-right: 10px;
 }
 
 .icon-svg {

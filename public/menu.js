@@ -52,7 +52,14 @@ async function fetchPreviousSubmissions(url) {
     for (let item of b["submissions"]) {
         let element = document.createElement("p");
         element.classList.add("warn");
-        element.innerHTML = errorSvg + item["yswsName"];
+        element.innerHTML = errorSvg + item["yswsName"] + ` (${item["hoursShipped"].toFixed(1)}h)`;
+
+        let date = new Date(item["approvedAt"]);
+        let dateText = date.toISOString().slice(0, 10);
+        let dateLabel = document.createElement("label");
+        dateLabel.innerText = dateText
+
+        element.appendChild(dateLabel);
         previousSubmissionsScroll.appendChild(element);
     }
 

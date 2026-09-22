@@ -15,17 +15,6 @@ let timelineCtx = timelineCanvas.getContext("2d");
 
 let horizontalScale = 1.0;
 
-let cachedDates = undefined;
-let cachedFirstTime = undefined;
-let cachedLastTime = undefined;
-let cachedCodingCategories = undefined;
-let cachedTimelineWidth = undefined;
-let cachedTimelineHorizontalScale = undefined;
-let cachedMaxDays = undefined;
-
-let startOffset = undefined;
-let endOffset = undefined;
-
 function parsePx(px) {
     return parseInt(px.replace("px", ""))
 }
@@ -76,6 +65,17 @@ function renderPieChart(data, colors, graphElement, graphTextElement) {
     }
     graphElement.style.backgroundImage = "conic-gradient(" + gradientStyle.substring(0, gradientStyle.length - 1) + ")";
 }
+
+let cachedDates = undefined;
+let cachedFirstTime = undefined;
+let cachedLastTime = undefined;
+let cachedCodingCategories = undefined;
+let cachedTimelineWidth = undefined;
+let cachedTimelineHorizontalScale = undefined;
+let cachedMaxDays = undefined;
+
+let startOffset = undefined;
+let endOffset = undefined;
 
 function renderGraph(heartbeats, projects) {
     let registeredTimes = {};
@@ -180,9 +180,6 @@ function renderGraph(heartbeats, projects) {
     let yOffset = 35;
     graphCanvas.height = canvasHeight;
 
-    function getDateX(date) {
-        return date * 100;
-    }
     function iterateDates(callback, first = firstTime, last = lastTime) {
         let index = 0;
         let dateCount = 0;
@@ -204,7 +201,7 @@ function renderGraph(heartbeats, projects) {
         }
     }
     let horizontalPadding = 100;
-    let maxX = getDateX(lastTime - firstTime);
+    let maxX = (lastTime - firstTime);
     horizontalScale = (800 - horizontalPadding) / maxX;
 
     let canvasWidth = maxX * horizontalScale + horizontalPadding;
@@ -228,7 +225,7 @@ function renderGraph(heartbeats, projects) {
         if (!value && !started) {
             return;
         }
-        let x = getDateX(date - firstTime) * horizontalScale + xOffset;
+        let x = (date - firstTime) * horizontalScale + xOffset;
         let y = (value || 0) * verticalScale;
         ctx.lineTo(x, canvasHeight - y - yOffset);
     });
@@ -237,12 +234,12 @@ function renderGraph(heartbeats, projects) {
 
     ctx.font = "12px Verdana";
     ctx.fillStyle = "gray";
-    let showXLabelEvery = Math.max(Math.floor(1 / horizontalScale / 1.2), 1);
+    let showXLabelEvery = Math.max(Math.floor(100 / horizontalScale / 1.2), 1);
     iterateDates((date, value, index) => {
         if (index % showXLabelEvery != 0) {
             return;
         }
-        let x = getDateX(date - firstTime) * horizontalScale + xOffset;
+        let x = (date - firstTime) * horizontalScale + xOffset;
         let dateObj = new Date(date * 24 * 60 * 60 * 1000);
         ctx.fillText(dateObj.getDate() + "/" + (dateObj.getMonth() + 1), x, canvasHeight);
     });
@@ -250,7 +247,7 @@ function renderGraph(heartbeats, projects) {
     if (Object.keys(commitDays).length > 0) {
         ctx.beginPath();
         iterateDates((date, _) => {
-            let x = getDateX(date - firstTime) * horizontalScale + xOffset;
+            let x = (date - firstTime) * horizontalScale + xOffset;
             let value = commitDays[date] || 0;
             let maxY = highest * verticalScale;
             let y = value / highestCommitDays * maxY;
@@ -288,13 +285,13 @@ function renderGraph(heartbeats, projects) {
     // let timelineRect = timelineContainer.getBoundingClientRect();
     timelineContainer.style.width = "";
     let computedStyle = getComputedStyle(timelineContainer);
-    let unoffsetedMaxX = getDateX(unoffsetedLastTime - unoffsetedFirstTime);
+    let unoffsetedMaxX = (unoffsetedLastTime - unoffsetedFirstTime);
     let timelineHorizontalScale = 800 / unoffsetedMaxX;
 
     let w = 800;
     let h = parsePx(computedStyle.height);
 
-    w = Math.floor(w / (100 * timelineHorizontalScale)) * (100 * timelineHorizontalScale);
+    w = Math.floor(w / (timelineHorizontalScale)) * (timelineHorizontalScale);
     timelineCanvas.width = w
     timelineCanvas.height = h;
 
@@ -309,7 +306,7 @@ function renderGraph(heartbeats, projects) {
         if (!value) {
             return;
         }
-        let x = getDateX(date - unoffsetedFirstTime) * timelineHorizontalScale;
+        let x = (date - unoffsetedFirstTime) * timelineHorizontalScale;
 
         // if day has less than 10 minutes hackatime,
         // use commit instead for activity
@@ -321,7 +318,7 @@ function renderGraph(heartbeats, projects) {
         }
         let y = (value || 0) * timelineVerticalScale;
         timelineCtx.beginPath();
-        timelineCtx.fillRect(x, h - y, 100 * timelineHorizontalScale, value * verticalScale);
+        timelineCtx.fillRect(x, h - y, timelineHorizontalScale, value * verticalScale);
     }, unoffsetedFirstTime, unoffsetedLastTime);
 
     if (!handleStart.style.left) {
@@ -330,7 +327,7 @@ function renderGraph(heartbeats, projects) {
     }
     if (!handleEnd.style.left) { handleEnd.style.left = w + "px"; }
 
-    cachedMaxDays = unoffsetedMaxX / 100;
+    cachedMaxDays = unoffsetedMaxX;
     cachedTimelineWidth = w;
 }
 
@@ -415,7 +412,7 @@ function mouseMove(event) {
     if (draggingHandle.active) {
         let minValue = 0;
         let maxValue = cachedTimelineWidth;
-        let dayWidth = 100 * cachedTimelineHorizontalScale;
+        let dayWidth = cachedTimelineHorizontalScale;
 
         let minDays = 2;
 
@@ -444,7 +441,7 @@ function mouseMove(event) {
         timelineAreaFilled.style.width = delta + "px";
         timelineAreaFilled.style.left = handleStart.style.left;
 
-        let value = roundVeryClose(parsePx(draggingHandle.element.style.left) / (100 * cachedTimelineHorizontalScale));
+        let value = roundVeryClose(parsePx(draggingHandle.element.style.left) / cachedTimelineHorizontalScale);
         let oldStart = startOffset;
         let oldEnd = endOffset;
         if (draggingHandle.isStart) {

@@ -1,17 +1,7 @@
-let graphYLabels = gd("graph-y-labels");
-let graphCanvas = gd("graph-canvas");
 let hourGraph = gd("hour-graph");
 let hourGraphText = gd("hour-graph-text");
 let commitTypeGraph = gd("commit-type-graph");
 let commitTypeGraphText = gd("commit-type-graph-text");
-let timelineCanvas = gd("timeline-canvas");
-let timelineContainer = gd("graph-timeline");
-let handleStart = gd("handle-start");
-let handleEnd = gd("handle-end");
-let timelineAreaFilled = gd("timeline-area-filled");
-
-let ctx = graphCanvas.getContext("2d");
-let timelineCtx = timelineCanvas.getContext("2d");
 
 let horizontalScale = 1.0;
 
@@ -76,6 +66,98 @@ let cachedMaxDays = undefined;
 
 let startOffset = undefined;
 let endOffset = undefined;
+
+class Graph {
+    dataLines = {};
+    colors = [];
+    timelineWidth = 0;
+    timelineHorizontalScale = 0;
+    constructor(parent, colors) {
+        this.yLabels = document.createElement("div");
+        this.yLabels.classList.add("graph-y-labels");
+
+        this.container = document.createElement("div");
+        this.container.classList.add("graph-container");
+        this.canvas = document.createElement("canvas");
+        this.canvas.classList.add("graph-canvas");
+        this.ctx = this.canvas.getContext("2d");
+        this.container.appendChild(this.canvas);
+
+        this.timeline = document.createElement("div");
+        this.timeline.classList.add("graph-timeline");
+        this.timelineCanvas = document.createElement("canvas");
+        this.timelineCtx = this.timelineCanvas.getContext("2d");
+        this.timelineCanvas.classList.add("timeline-canvas");
+        this.timelineAreaFilled = document.createElement("div");
+        this.timelineAreaFilled.classList.add("timeline-area-filled");
+        this.handleStart = document.createElement("div");
+        this.handleStart.classList.add("graph-timeline-handle");
+        this.handleStart.classList.add("no-drag");
+        this.handleStart.classList.add("handle-start");
+        this.handleStart.onmousedown = handleMouseDown.bind(this, this.handleStart, true);
+        this.handleEnd = document.createElement("div");
+        this.handleEnd.classList.add("graph-timeline-handle");
+        this.handleEnd.classList.add("no-drag");
+        this.handleEnd.classList.add("handle-end");
+        this.handleEnd.onmousedown = handleMouseDown.bind(this, this.handleEnd, false);
+        this.timeline.appendChild(this.timelineCanvas);
+        this.timeline.appendChild(this.timelineAreaFilled);
+        this.timeline.appendChild(this.handleStart);
+        this.timeline.appendChild(this.handleEnd);
+
+        parent.appendChild(this.yLabels);
+        parent.appendChild(this.container);
+        parent.appendChild(this.timeline);
+
+        let computed = getComputedStyle(document.documentElement);
+        for (let color of colors) {
+            this.colors.push(computed.getPropertyValue("--graph-" + color));
+        }
+    }
+    render(dataLines) {
+        if (dataLines) {
+            this.firstTime = undefined;
+            this.lastTime = undefined;
+            this.highest = undefined;
+            for (let line of this.dataLines) {
+                for (let [x, y] of Object.entries(line)) {
+                    if (!this.firstTime || x < this.firstTime) {
+                        this.firstTime = x;
+                    }
+                    if (!this.lastTime || x < this.lastTime) {
+                        this.lastTime = x;
+                    }
+                    if (y > this.highest) {
+                        this.highest = y;
+                    }
+                }
+            }
+        }
+        function iterateValues(callback, first = this.firstTime, last = this.lastTime) {
+            let index = 0;
+            let dateCount = 0;
+            while (true) {
+                let date = first + 1 * index;
+                let value = dates[date];
+                if (value != undefined) {
+                    dateCount++;
+                }
+                if (date > last) {
+                    break;
+                }
+
+                callback(date, value, index);
+                if (dateCount >= dateAmt) {
+                    break;
+                }
+                index++;
+            }
+        }
+        for (let line of this.dataLines) {
+
+        }
+    }
+}
 
 function renderGraph(heartbeats, projects) {
     let registeredTimes = {};
@@ -411,15 +493,15 @@ function mouseMove(event) {
 
     if (draggingHandle.active) {
         let minValue = 0;
-        let maxValue = cachedTimelineWidth;
-        let dayWidth = cachedTimelineHorizontalScale;
+        let maxValue = draggingHandle.graph.timelineWidth;
+        let dayWidth = draggingHandle.graph.timelineHorizontalScale;
 
         let minDays = 2;
 
         if (draggingHandle.isStart) {
-            maxValue = parsePx(handleEnd.style.left) - dayWidth * minDays;
+            maxValue = parsePx(draggingHandle.graph.handleEnd.style.left) - dayWidth * minDays;
         } else {
-            minValue = parsePx(handleStart.style.left) + dayWidth * minDays;
+            minValue = parsePx(draggingHandle.graph.handleStart.style.left) + dayWidth * minDays;
         }
 
 
@@ -436,12 +518,12 @@ function mouseMove(event) {
 
         draggingHandle.element.style.left = x + "px";
 
-        let otherPos = parsePx((draggingHandle.isStart ? handleEnd : handleStart).style.left);
+        let otherPos = parsePx((draggingHandle.isStart ? draggingHandle.graph.handleEnd : draggingHandle.graph.handleStart).style.left);
         let delta = Math.abs(x - otherPos);
-        timelineAreaFilled.style.width = delta + "px";
-        timelineAreaFilled.style.left = handleStart.style.left;
+        draggingHandle.graph.timelineAreaFilled.style.width = delta + "px";
+        draggingHandle.graph.timelineAreaFilled.style.left = draggingHandle.graph.handleStart.style.left;
 
-        let value = roundVeryClose(parsePx(draggingHandle.element.style.left) / cachedTimelineHorizontalScale);
+        let value = roundVeryClose(parsePx(draggingHandle.element.style.left) / dayWidth);
         let oldStart = startOffset;
         let oldEnd = endOffset;
         if (draggingHandle.isStart) {
@@ -459,6 +541,7 @@ function mouseMove(event) {
 
 let draggingHandle = {
     active: false,
+    graph: undefined,
     element: undefined,
     startX: 0,
     startY: 0,
@@ -475,7 +558,10 @@ function handleMouseDown(element, startHandle) {
     draggingHandle.startX = mouseX;
     draggingHandle.startY = mouseY;
     draggingHandle.startValue = parsePx(element.style.left);
+    draggingHandle.graph = this;
 }
 
 document.body.addEventListener("mouseup", mouseUp);
 document.body.addEventListener("mousemove", mouseMove);
+
+let graph = new Graph(graphSection, ["red", "blue"]);

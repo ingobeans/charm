@@ -118,20 +118,20 @@ label,
     margin: 0 15px 15px 0;
 }
 
-#graph-container {
+.graph-container {
     max-width: 800px;
     overflow: auto;
     padding-bottom: 15px;
     margin-top: 1lh;
 }
 
-#graph-y-labels {
+.graph-y-labels {
     height: 0;
     position: relative;
     margin-top: 1lh;
 }
 
-#graph-y-labels>label {
+.graph-y-labels>label {
     position: absolute;
     width: calc(100% - 10px);
     pointer-events: none;
@@ -139,12 +139,12 @@ label,
     color: var(--graph-blue);
 }
 
-#graph-y-labels>label>span {
+.graph-y-labels>label>span {
     float: right;
     color: var(--graph-red);
 }
 
-#graph-y-labels>label>hr {
+.graph-y-labels>label>hr {
     opacity: 0.1;
     margin: 0;
     transform: translateY(-0.5lh);
@@ -152,30 +152,30 @@ label,
     margin-left: 25px;
 }
 
-#graph-loader {
+.graph-loader {
     display: none;
     margin: 20px 0;
 }
 
-.loading>#graph-container,
-.loading>#graph-y-labels {
+.loading>.graph-container,
+.loading>.graph-y-labels {
     display: none;
 }
 
-.loading>#graph-loader {
+.loading>.graph-loader {
     display: flex;
 }
 
-#graph-loader>.loader {
+.graph-loader>.loader {
     margin-left: 10px;
 }
 
-#graph-loader>span {
+.graph-loader>span {
     width: 300px;
     margin-left: 10px;
 }
 
-/* #graph-section {} */
+/* .graph-section {} */
 
 .info-mark {
     display: inline;
@@ -414,11 +414,11 @@ th {
     height: fit-content;
 }
 
-.loading #graph-timeline {
+.loading .graph-timeline {
     display: none;
 }
 
-#graph-timeline {
+.graph-timeline {
     --timeline-height: 30px;
     --handle-height: 40px;
     --handle-width: 7px;
@@ -439,11 +439,11 @@ th {
     cursor: ew-resize;
 }
 
-#handle-start {
+.handle-start {
     transform: translateX(calc(var(--handle-width) * -1));
 }
 
-#timeline-area-filled {
+.timeline-area-filled {
     width: 400px;
     position: absolute;
     height: var(--timeline-height);
@@ -451,6 +451,6 @@ th {
     top: 0;
 }
 
-#handle-end {
+.handle-end {
     left: 100%;
 }

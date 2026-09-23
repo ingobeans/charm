@@ -11,12 +11,12 @@ try {
 } catch {
     oauthUid = undefined;
     githubToken = undefined;
+    port = 8080;
 }
 
 root = "";
 
 const app = express();
-const port = 8080;
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/public');

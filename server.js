@@ -6,13 +6,15 @@ let crypto = require('crypto');
 require("./public/shared.js");
 require("./encryption.js");
 
+
+oauthUid = undefined;
+oauthSecret = undefined;
+githubToken = undefined;
+port = 8080;
+
 try {
     require("./config.js");
-} catch {
-    oauthUid = undefined;
-    githubToken = undefined;
-    port = 8080;
-}
+} catch { }
 
 root = "";
 

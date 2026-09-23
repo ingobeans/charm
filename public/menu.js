@@ -14,6 +14,7 @@ let authorPfp = gd("author-pfp");
 let authorSlackId = gd("author-slackid");
 let authorGithub = gd("author-github");
 let authorContainer = gd("author-container");
+let authorLoader = gd("author-loader");
 let oauthButton = gd("oauth-button");
 let repoInput = gd("repo-input");
 let repoContainer = gd("repo-container");
@@ -173,6 +174,18 @@ for (let input of document.querySelectorAll("input")) {
     input.addEventListener("input", inputChange);
 }
 
+async function getCachet(userId) {
+    let r = await fetch("https://cachet.dunkirk.sh/users/" + userId);
+    if (r.ok) {
+        let slackData = await r.json();
+        authorPfp.src = "";
+        authorPfp.src = slackData["imageUrl"];
+        authorName.innerText = slackData["displayName"];
+        authorPfp.style.display = "unset";
+        authorLoader.style.display = "";
+    }
+}
+
 function handleAuthorDataReq(res) {
     res.text().then((value => {
         let data = JSON.parse(value);
@@ -182,10 +195,16 @@ function handleAuthorDataReq(res) {
         authorGithub.innerText = data["github_username"] || "";
         authorGithub.href = (data["github_username"]) ? ("https://github.com/" + data["github_username"]) : "";
         authorGithub.style.visibility = (data["github_username"]) ? "visible" : "hidden";
-        authorPfp.src = data["pfp"] || "/placeholder.png";
-        if (data["username"]) {
-            authorName.innerText = data["username"];
+        authorPfp.src = "/placeholder.png";
+        authorName.innerHTML = "&nbsp;";
+
+        if (data["slack_id"]) {
+            authorPfp.style.display = "none";
+            authorLoader.style.display = "unset";
+            getCachet(data["slack_id"]);
         } else {
+            authorPfp.style.display = "unset";
+            authorLoader.style.display = "";
             authorName.innerHTML = "[unknown]<div class='info-mark'>?<div>The OAuth App that issued the selected token doesn't have the profile scope</div></div>";
         }
     }))

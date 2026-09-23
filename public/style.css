@@ -15,6 +15,10 @@ html {
 
     --timeline-bg: #0070ff3b;
     --timeline-border: #0070ff;
+
+    --trust-red: red;
+    --trust-green: lime;
+    --trust-blue: #2c99ff;
 }
 
 .light-root {
@@ -453,4 +457,17 @@ th {
 
 #handle-end {
     left: 100%;
+}
+
+#author-title-container {
+    display: flex;
+    height: 1lh;
+}
+
+#author-trust-level {
+    visibility: hidden;
+    color: lime;
+    width: 100%;
+    text-align: right;
+    cursor: help;
 }

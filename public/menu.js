@@ -15,6 +15,7 @@ let authorSlackId = gd("author-slackid");
 let authorGithub = gd("author-github");
 let authorContainer = gd("author-container");
 let authorLoader = gd("author-loader");
+let authorTrustLevel = gd("author-trust-level");
 let oauthButton = gd("oauth-button");
 let repoInput = gd("repo-input");
 let repoContainer = gd("repo-container");
@@ -174,6 +175,33 @@ for (let input of document.querySelectorAll("input")) {
     input.addEventListener("input", inputChange);
 }
 
+function capitalizeFirst(string) {
+    return string[0].toUpperCase() + string.slice(1)
+}
+
+async function getTrustLevel(userId) {
+    let r = await fetch("https://flaron.halceon.dev/user/" + userId);
+    authorTrustLevel.title = "User Trust Level";
+    if (!r.ok) {
+        authorTrustLevel.style.color = "white";
+        authorTrustLevel.style.visibility = "unset";
+        authorTrustLevel.title = "ERROR: Couldn't fetch trust level.";
+        return;
+    }
+    let d = await r.json();
+    if (d["error"]) {
+        authorTrustLevel.style.color = "white";
+        authorTrustLevel.style.visibility = "unset";
+        authorTrustLevel.title = "ERROR: Couldn't fetch trust level: " + d["error"];
+        return;
+    }
+
+    let level = d["data"]["fraud"];
+    authorTrustLevel.style.color = `var(--trust-${level})`;
+    authorTrustLevel.style.visibility = "unset";
+    return { raw: level, pretty: capitalizeFirst(level) };
+}
+
 async function getCachet(userId) {
     let r = await fetch("https://cachet.dunkirk.sh/users/" + userId);
     if (r.ok) {
@@ -190,6 +218,7 @@ function handleAuthorDataReq(res) {
     res.text().then((value => {
         let data = JSON.parse(value);
         console.log(data);
+        authorTrustLevel.style.visibility = "";
         authorContainer.classList.remove("loading");
         authorSlackId.innerText = data["slack_id"] || "";
         authorGithub.innerText = data["github_username"] || "";
@@ -202,6 +231,7 @@ function handleAuthorDataReq(res) {
             authorPfp.style.display = "none";
             authorLoader.style.display = "unset";
             getCachet(data["slack_id"]);
+            getTrustLevel(data["slack_id"]);
         } else {
             authorPfp.style.display = "unset";
             authorLoader.style.display = "";

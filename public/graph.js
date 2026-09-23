@@ -300,19 +300,22 @@ function renderGraph(heartbeats, projects) {
     let commitToHourScaling = highest / highestCommitDays;
     let timelineVerticalScale = h / highest;
     cachedTimelineHorizontalScale = timelineHorizontalScale;
+    console.log(commitToHourScaling);
+
+    let commitsLoaded = Object.keys(commitDays).length > 0;
 
     timelineCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--timeline-border");
     iterateDates((date, value) => {
-        if (!value) {
+        if (!value && !(commitsLoaded && commitDays[date])) {
             return;
         }
         let x = (date - unoffsetedFirstTime) * timelineHorizontalScale;
 
         // if day has less than 10 minutes hackatime,
         // use commit instead for activity
-        if (value < 10 && Object.keys(commitDays).length > 0) {
+        if ((value || 0) < 10 && commitsLoaded) {
             let commitValue = (commitDays[date] || 0) * commitToHourScaling;
-            if (commitValue > value) {
+            if (commitValue > (value || 0)) {
                 value = commitValue;
             }
         }

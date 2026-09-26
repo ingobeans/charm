@@ -88,7 +88,6 @@ function renderGraph(heartbeats, projects) {
     let dates = {};
     let firstTime = undefined;
     let lastTime = 0;
-    lapses = {};
 
     if (!heartbeats && cachedDates) {
         dates = cachedDates;
@@ -98,6 +97,7 @@ function renderGraph(heartbeats, projects) {
     } else if (!heartbeats) {
         return;
     } else {
+        lapses = {};
         dates = {};
         firstTime = undefined;
         lastTime = 0;

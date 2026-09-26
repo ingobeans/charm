@@ -165,7 +165,8 @@ function renderGraph(heartbeats, projects) {
         "timelapsing": "#147cbdff",
         "designing": "#6264f0",
         "building": "#3ace6bff",
-        "writing docs": "#ffcfa3ff"
+        "writing docs": "#ffcfa3ff",
+        "writing tests": "#7d7d7d",
     }
     renderPieChart(codingCategories, colors, hourGraph, hourGraphText);
 

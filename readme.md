@@ -1,6 +1,6 @@
 # Charm
 
-![Screenshot](https://cdn.hackclub.com/01a0ab44-4da1-75d0-9be0-03f02889b874/paste-1789579774686.png)
+<img src="https://cdn.hackclub.com/01a0dea0-dd71-75b9-9311-d882b99b9961/paste-1790441480521.png" width=700 height=457>
 
 charm is a WIP Hack Club reviewer tool i'm working on !
 

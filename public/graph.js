@@ -184,6 +184,7 @@ function renderGraph(heartbeats, projects) {
             let container = document.createElement("a");
             container.classList.add("lapse-entry");
             container.href = "https://lapse.hackclub.com/timelapse/" + key;
+            container.target = "_blank";
 
             let bar = document.createElement("div");
             bar.classList.add("lapse-entry-bar");

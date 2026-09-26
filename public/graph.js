@@ -187,7 +187,7 @@ function renderGraph(heartbeats, projects) {
 
             let bar = document.createElement("div");
             bar.classList.add("lapse-entry-bar");
-            bar.style.setProperty("--amt", amt / lapsesHighest);
+            bar.style.setProperty("--amt", (amt / lapsesHighest * 100) + "%");
 
             let text = document.createElement("span");
             text.innerText = name;

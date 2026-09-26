@@ -7,6 +7,8 @@ html {
     --muted-text-color: gray;
     --grid-border-color: #5656563e;
 
+    --bar-unfilled: #303030;
+
     --graph-blue: #5980f2;
     --graph-red: #ff454e;
     --graph-human: #c9f;
@@ -26,6 +28,7 @@ html {
     --darker-bg: #f2f2f2;
     --text-color: black;
     --border-color: #c7c7c7;
+    --bar-unfilled: #d2d2d2;
 }
 
 body {
@@ -473,7 +476,7 @@ th {
 }
 
 #lapses-scroll {
-    height: 167px;
+    max-height: 167px;
     overflow-y: auto;
 }
 
@@ -487,9 +490,11 @@ th {
 
 .lapse-entry-bar {
     display: inline-block;
-    --width: 50px;
-    width: calc(var(--width) * var(--amt));
-    background-color: var(--graph-blue);
     height: 8px;
     margin-right: 5px;
+
+    width: var(--width);
+    --width: 65px;
+    background: linear-gradient(90deg, var(--graph-blue) 0%, var(--graph-blue) var(--amt), var(--bar-unfilled) var(--amt));
+    border-radius: 2px;
 }

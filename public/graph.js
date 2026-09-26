@@ -88,6 +88,7 @@ function renderGraph(heartbeats, projects) {
     let dates = {};
     let firstTime = undefined;
     let lastTime = 0;
+    lapses = {};
 
     if (!heartbeats && cachedDates) {
         dates = cachedDates;
@@ -175,8 +176,8 @@ function renderGraph(heartbeats, projects) {
         if (value[0] > lapsesHighest) lapsesHighest = value[0];
     };
 
+    lapsesScroll.innerHTML = "";
     if (keysSorted.length > 0) {
-        lapsesScroll.innerHTML = "";
         for (let key of keysSorted) {
             let amt = lapses[key][0];
             let name = lapses[key][1];
@@ -199,6 +200,8 @@ function renderGraph(heartbeats, projects) {
         }
 
         lapsesContainer.style.display = "";
+    } else {
+        lapsesContainer.style.display = "none";
     }
 
 

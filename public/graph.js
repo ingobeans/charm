@@ -77,7 +77,7 @@ let cachedTimelineHorizontalScale = undefined;
 let cachedMaxDays = undefined;
 
 let startOffset = undefined;
-let endOffset = undefined;
+let endOffset = 1;
 let lapses = {};
 
 function renderGraph(heartbeats, projects) {

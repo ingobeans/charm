@@ -1,12 +1,12 @@
 # Charm
 
-<img src="https://cdn.hackclub.com/01a0dea0-dd71-75b9-9311-d882b99b9961/paste-1790441480521.png" width=700 height=457>
+<img src="https://cdn.hackclub.com/01a0dea4-cf02-7ae5-957b-3fb0ea69d2fb/paste-1790441738679.png" width=700 height=457>
 
 charm is a WIP Hack Club reviewer tool i'm working on !
 
-it's similar to Introspect but designed to be very easy for any YSWS to implement. 
+inspired by Introspect but tracks more data and made to be easy for any YSWS to implement. 
 
-a key difference is also that it uses Hackatime tokens rather than user IDs, meaning it can analyze Hackatime heartbeats directly, allowing for more information :3
+a key difference is that it uses Hackatime tokens rather than user IDs, meaning it can analyze Hackatime heartbeats directly, allowing for more information :3
 
 
 ## Currently Implemented Features
@@ -15,6 +15,7 @@ a key difference is also that it uses Hackatime tokens rather than user IDs, mea
 * Selectable timeline
 * Hour breakdown (i.e. ai-coding rates, timelapses, etc)
 * Commit type breakdown (i.e. web uploads)
+* Lists tracked lapses and their hour contribution
 * General author and repository information
 * Session system to create sharable encrypted links to data (used so YSWSs can create sessions for projects and share the links with reviewers)
 * Self Auth for testing (Button to log in with Hackatime OAuth to use your own hackatime token)

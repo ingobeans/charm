@@ -471,3 +471,25 @@ th {
     text-align: right;
     cursor: help;
 }
+
+#lapses-scroll {
+    height: 167px;
+    overflow-y: auto;
+}
+
+.lapse-entry {
+    display: block;
+}
+
+.lapse-entry>span {
+    font-size: small;
+}
+
+.lapse-entry-bar {
+    display: inline-block;
+    --width: 50px;
+    width: calc(var(--width) * var(--amt));
+    background-color: var(--graph-blue);
+    height: 8px;
+    margin-right: 5px;
+}

@@ -9,6 +9,8 @@ let timelineContainer = gd("graph-timeline");
 let handleStart = gd("handle-start");
 let handleEnd = gd("handle-end");
 let timelineAreaFilled = gd("timeline-area-filled");
+let lapsesContainer = gd("lapses-container");
+let lapsesScroll = gd("lapses-scroll");
 
 let ctx = graphCanvas.getContext("2d");
 let timelineCtx = timelineCanvas.getContext("2d");
@@ -128,15 +130,18 @@ function renderGraph(heartbeats, projects) {
                 category = "lapsing";
 
                 // get lapse id
-                r = /.*\((.*)\)/gm;
+                r = /(.*) \((.*)\)/gm;
                 let result = r.exec(heartbeat.entity);
                 let id;
-                if (result == null || !result[1]) {
+                if (result == null || !result[1] || !result[2]) {
                     id = "invalid";
                 } else {
-                    id = result[1];
+                    id = result[2];
                 }
-                lapses[id] = (lapses[id] || 0) + minutesTrack;
+                if (lapses[id] == undefined) {
+                    lapses[id] = [0, result[1]];
+                }
+                lapses[id][0] += minutesTrack;
             }
 
             codingCategories[category] = (codingCategories[category] || 0) + minutesTrack;
@@ -162,6 +167,39 @@ function renderGraph(heartbeats, projects) {
         "writing docs": "#ffcfa3ff"
     }
     renderPieChart(codingCategories, colors, hourGraph, hourGraphText);
+
+    // show lapses
+    let keysSorted = Object.keys(lapses).sort(function (a, b) { return lapses[b][0] - lapses[a][0] });
+    let lapsesHighest = 0;
+    for (let value of Object.values(lapses)) {
+        if (value[0] > lapsesHighest) lapsesHighest = value[0];
+    };
+
+    if (keysSorted.length > 0) {
+        lapsesScroll.innerHTML = "";
+        for (let key of keysSorted) {
+            let amt = lapses[key][0];
+            let name = lapses[key][1];
+
+            let container = document.createElement("a");
+            container.classList.add("lapse-entry");
+            container.href = "https://lapse.hackclub.com/timelapse/" + key;
+
+            let bar = document.createElement("div");
+            bar.classList.add("lapse-entry-bar");
+            bar.style.setProperty("--amt", amt / lapsesHighest);
+
+            let text = document.createElement("span");
+            text.innerText = name;
+
+            container.appendChild(bar);
+            container.appendChild(text);
+            lapsesScroll.appendChild(container)
+        }
+
+        lapsesContainer.style.display = "";
+    }
+
 
     // padding
     lastTime += 1;

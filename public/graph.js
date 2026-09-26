@@ -76,6 +76,7 @@ let cachedMaxDays = undefined;
 
 let startOffset = undefined;
 let endOffset = undefined;
+let lapses = {};
 
 function renderGraph(heartbeats, projects) {
     let registeredTimes = {};
@@ -85,6 +86,7 @@ function renderGraph(heartbeats, projects) {
     let dates = {};
     let firstTime = undefined;
     let lastTime = 0;
+
     if (!heartbeats && cachedDates) {
         dates = cachedDates;
         lastTime = cachedLastTime;
@@ -120,7 +122,24 @@ function renderGraph(heartbeats, projects) {
             if (lastTime < dateValue) {
                 lastTime = dateValue;
             }
-            codingCategories[heartbeat.category] = (codingCategories[heartbeat.category] || 0) + minutesTrack;
+
+            let category = heartbeat.category;
+            if (heartbeat.category == "timelapsing" && heartbeat.editor == "lapse") {
+                category = "lapsing";
+
+                // get lapse id
+                r = /.*\((.*)\)/gm;
+                let result = r.exec(heartbeat.entity);
+                let id;
+                if (result == null || !result[1]) {
+                    id = "invalid";
+                } else {
+                    id = result[1];
+                }
+                lapses[id] = (lapses[id] || 0) + minutesTrack;
+            }
+
+            codingCategories[category] = (codingCategories[category] || 0) + minutesTrack;
             dates[dateValue] = (dates[dateValue] || 0) + minutesTrack;
         }
 
@@ -136,8 +155,10 @@ function renderGraph(heartbeats, projects) {
     let colors = {
         "coding": "#c9f",
         "ai coding": "#f0629dff",
-        "timelapsing": "#3ba5e5",
+        "lapsing": "#3ba5e5",
+        "timelapsing": "#147cbdff",
         "designing": "#6264f0",
+        "building": "#3ace6bff",
         "writing docs": "#ffcfa3ff"
     }
     renderPieChart(codingCategories, colors, hourGraph, hourGraphText);

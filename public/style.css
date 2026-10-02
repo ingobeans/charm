@@ -245,7 +245,10 @@ label,
 }
 
 @-moz-document url-prefix() {
-    #previous-submissions-scroll {
+
+    #previous-submissions-scroll,
+    #lapses-scroll,
+    #files-graph-scroll {
         padding-right: 10px;
     }
 }
@@ -475,7 +478,8 @@ th {
     cursor: help;
 }
 
-#lapses-scroll {
+#lapses-scroll,
+#files-graph-scroll {
     max-height: 167px;
     overflow-y: auto;
 }

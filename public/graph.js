@@ -11,6 +11,8 @@ let handleEnd = gd("handle-end");
 let timelineAreaFilled = gd("timeline-area-filled");
 let lapsesContainer = gd("lapses-container");
 let lapsesScroll = gd("lapses-scroll");
+let filesGraphContainer = gd("files-graph-container");
+let filesGraphScroll = gd("files-graph-scroll");
 
 let ctx = graphCanvas.getContext("2d");
 let timelineCtx = timelineCanvas.getContext("2d");
@@ -68,6 +70,46 @@ function renderPieChart(data, colors, graphElement, graphTextElement) {
     graphElement.style.backgroundImage = "conic-gradient(" + gradientStyle.substring(0, gradientStyle.length - 1) + ")";
 }
 
+function renderListGraph(scroll, data, parseDataFunction, callback) {
+    let keysSorted = Object.keys(data).sort(
+        function (a, b) {
+            b = parseDataFunction(b, data[b]).amt;
+            a = parseDataFunction(a, data[a]).amt;
+            return b - a
+        }
+    );
+    let highest = 0;
+    for (let [key, value] of Object.entries(data)) {
+        let amt = parseDataFunction(key, value).amt;
+        if (amt > highest) highest = amt;
+    };
+
+    scroll.innerHTML = "";
+    for (let key of keysSorted) {
+        let parsed = parseDataFunction(key, data[key]);
+        let amt = parsed.amt;
+        let name = parsed.name;
+
+        let container = document.createElement("a");
+        container.classList.add("lapse-entry");
+
+        let bar = document.createElement("div");
+        bar.classList.add("lapse-entry-bar");
+        bar.style.setProperty("--amt", (amt / highest * 100) + "%");
+        container.appendChild(bar);
+
+        let text = document.createElement("span");
+        text.innerText = name;
+        container.appendChild(text);
+
+        if (callback) {
+            callback(container, key);
+        }
+
+        scroll.appendChild(container)
+    }
+}
+
 let cachedDates = undefined;
 let cachedFirstTime = undefined;
 let cachedLastTime = undefined;
@@ -79,6 +121,7 @@ let cachedMaxDays = undefined;
 let startOffset = undefined;
 let endOffset = 1;
 let lapses = {};
+let files = {}
 
 function renderGraph(heartbeats, projects) {
     let registeredTimes = {};
@@ -98,6 +141,7 @@ function renderGraph(heartbeats, projects) {
         return;
     } else {
         lapses = {};
+        files = {};
         dates = {};
         firstTime = undefined;
         lastTime = 0;
@@ -143,7 +187,10 @@ function renderGraph(heartbeats, projects) {
                     lapses[id] = [0, result[1]];
                 }
                 lapses[id][0] += minutesTrack;
+            } else {
+                files[heartbeat.entity] = (files[heartbeat.entity] || 0) + minutesTrack;
             }
+
 
             codingCategories[category] = (codingCategories[category] || 0) + minutesTrack;
             dates[dateValue] = (dates[dateValue] || 0) + minutesTrack;
@@ -170,36 +217,27 @@ function renderGraph(heartbeats, projects) {
     }
     renderPieChart(codingCategories, colors, hourGraph, hourGraphText);
 
+    // filesGraphScroll
+    renderListGraph(filesGraphScroll, files,
+        (key, data) => {
+            let split = key.split("/");
+            return { amt: data, name: (split[split.length - 1] || key) + ` (~${(data / 60).toFixed(1)}h)` }
+        },
+        (container, key) => {
+            container.title = key;
+        });
+    filesGraphContainer.style.display = "";
+
     // show lapses
-    let keysSorted = Object.keys(lapses).sort(function (a, b) { return lapses[b][0] - lapses[a][0] });
-    let lapsesHighest = 0;
-    for (let value of Object.values(lapses)) {
-        if (value[0] > lapsesHighest) lapsesHighest = value[0];
-    };
-
-    lapsesScroll.innerHTML = "";
-    if (keysSorted.length > 0) {
-        for (let key of keysSorted) {
-            let amt = lapses[key][0];
-            let name = lapses[key][1];
-
-            let container = document.createElement("a");
-            container.classList.add("lapse-entry");
-            container.href = "https://lapse.hackclub.com/timelapse/" + key;
-            container.target = "_blank";
-
-            let bar = document.createElement("div");
-            bar.classList.add("lapse-entry-bar");
-            bar.style.setProperty("--amt", (amt / lapsesHighest * 100) + "%");
-
-            let text = document.createElement("span");
-            text.innerText = name;
-
-            container.appendChild(bar);
-            container.appendChild(text);
-            lapsesScroll.appendChild(container)
-        }
-
+    if (Object.keys(lapses).length > 0) {
+        renderListGraph(lapsesScroll, lapses,
+            (_, data) => {
+                return { amt: data[0], name: data[1] }
+            },
+            (container, key) => {
+                container.href = "https://lapse.hackclub.com/timelapse/" + key;
+                container.target = "_blank";
+            })
         lapsesContainer.style.display = "";
     } else {
         lapsesContainer.style.display = "none";

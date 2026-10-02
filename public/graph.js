@@ -495,7 +495,7 @@ function parseCommits(commits) {
 // ex rounds 23.9999999999999996 -> 24
 // 23.7 would still round downwards
 function roundVeryClose(v) {
-    return Math.floor(Math.round(v * 10) / 10)
+    return Math.floor(Math.round(v * 7) / 7)
 }
 
 let mouseX = 0;

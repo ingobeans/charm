@@ -16,6 +16,7 @@ a key difference is that it uses Hackatime tokens rather than user IDs, meaning 
 * Hour breakdown (i.e. ai-coding rates, timelapses, etc)
 * Commit type breakdown (i.e. web uploads)
 * Lists tracked lapses and their hour contribution
+* Shows each file sorted by hour contribution
 * General author and repository information
 * Session system to create sharable encrypted links to data (used so YSWSs can create sessions for projects and share the links with reviewers)
 * Self Auth for testing (Button to log in with Hackatime OAuth to use your own hackatime token)

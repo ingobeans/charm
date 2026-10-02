@@ -214,6 +214,7 @@ function renderGraph(heartbeats, projects) {
         "building": "#3ace6bff",
         "writing docs": "#ffcfa3ff",
         "writing tests": "#7d7d7d",
+        "debugging": "rgb(255, 162, 131)",
     }
     renderPieChart(codingCategories, colors, hourGraph, hourGraphText);
 

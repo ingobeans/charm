@@ -151,11 +151,14 @@ app.get('/repo', async (req, res) => {
     let commits = [];
 
     let apiUrl = `https://api.github.com/repos/${result.owner}/${result.name}/commits?per_page=100`;
+    if (result.host == "codeberg.org") {
+        apiUrl = `https://codeberg.org/api/v1/repos/${result.owner}/${result.name}/commits?per_page=100`;
+    }
     let headers = {
         "Accept": "application/json",
         "X-GitHub-Api-Version": "2026-03-10",
     };
-    if (githubToken) {
+    if (githubToken && result.host == "github.com") {
         headers["Authorization"] = "Bearer " + githubToken;
     }
     let apiRes = await fetch(apiUrl, { headers: headers });

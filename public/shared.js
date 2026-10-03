@@ -9,8 +9,8 @@ validateUrl = function (url) {
     if (!["http:", "https:"].includes(urlObj.protocol))
         return "Bad Url protocol. Must be http/https";
 
-    if (urlObj.host != "github.com")
-        return "Bad host. Must be github.com";
+    if (!["github.com", "codeberg.org"].includes(urlObj.host))
+        return "Bad host. Must be github.com or codeberg.org";
 
     let path = urlObj.pathname.split("/");
     if (path.length < 3)
@@ -18,5 +18,5 @@ validateUrl = function (url) {
 
     let owner = path[1];
     let name = path[2];
-    return { owner: owner, name: name };
+    return { owner: owner, name: name, host: urlObj.host };
 }

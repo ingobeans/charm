@@ -10,6 +10,7 @@ require("./encryption.js");
 oauthUid = undefined;
 oauthSecret = undefined;
 githubToken = undefined;
+codebergToken = undefined;
 port = 8080;
 
 try {
@@ -158,9 +159,18 @@ app.get('/repo', async (req, res) => {
         "Accept": "application/json",
         "X-GitHub-Api-Version": "2026-03-10",
     };
-    if (githubToken && result.host == "github.com") {
-        headers["Authorization"] = "Bearer " + githubToken;
+
+    let token;
+    if (result.host == "github.com") {
+        token = githubToken;
+    } else if (result.host == "codeberg.org") {
+        token = codebergToken;
     }
+
+    if (token) {
+        headers["Authorization"] = "Bearer " + token;
+    }
+
     let apiRes = await fetch(apiUrl, { headers: headers });
 
 

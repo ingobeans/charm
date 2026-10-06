@@ -69,8 +69,6 @@ async function fetchPreviousSubmissions(url) {
 }
 
 async function fetchRepo(url) {
-    if (url == fetchedGithubRepo)
-        return;
     let result = validateUrl(url);
     if (!result["owner"]) {
         return;
@@ -78,6 +76,8 @@ async function fetchRepo(url) {
     if (url.endsWith(".git")) {
         url = url.replace(".git","");
     }
+    if (url == fetchedGithubRepo)
+        return;
 
     fetchedGithubRepo = url;
 

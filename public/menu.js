@@ -74,6 +74,10 @@ async function fetchRepoTree(url, sha) {
     let r = await fetch(apiUrl);
     let b = await r.json();
     cachedRepoTree = b;
+
+    if (Object.keys(files).length > 0) {
+        drawFilesGraph();
+    }
 }
 
 async function fetchRepo(url) {

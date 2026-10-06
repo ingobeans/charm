@@ -70,6 +70,51 @@ function renderPieChart(data, colors, graphElement, graphTextElement) {
     graphElement.style.backgroundImage = "conic-gradient(" + gradientStyle.substring(0, gradientStyle.length - 1) + ")";
 }
 
+function drawFilesGraph() {
+    renderListGraph(filesGraphScroll, files,
+        (key, data) => {
+            let split = key.split("/");
+            return { amt: data.time, name: (split[split.length - 1] || key) + ` (~${(data.time / 60).toFixed(1)}h)` }
+        },
+        (container, key) => {
+            container.title = key;
+            if (!cachedRepoTree) {
+                return;
+            }
+
+            let urlResult = validateUrl(fetchedGithubRepo);
+            if (!urlResult["owner"]) {
+                return;
+            }
+
+            let parts = key.split("/");
+            let project = files[key].project;
+            let projectIndex = parts.indexOf(project);
+            if (projectIndex == -1) { return; }
+            let relativeParts = parts.slice(projectIndex + 1);
+            let joinedPath = relativeParts.join("/");
+
+            let found = false;
+            for (let item of cachedRepoTree) {
+                if (item.type == "tree" || item.path != joinedPath) { continue }
+                found = true;
+            }
+            if (found) {
+                let url;
+                if (urlResult.host == "github.com") {
+                    url = `${fetchedGithubRepo}/blob/main/${joinedPath}`;
+                } else {
+                    url = `${fetchedGithubRepo}/src/branch/main/${joinedPath}`;
+                }
+                container.href = url;
+                container.target = "_blank";
+            } else {
+                container.style.color = "var(--muted-text-color)";
+            }
+        });
+    filesGraphContainer.style.display = "";
+}
+
 function renderListGraph(scroll, data, parseDataFunction, callback) {
     let keysSorted = Object.keys(data).sort(
         function (a, b) {
@@ -188,7 +233,11 @@ function renderGraph(heartbeats, projects) {
                 }
                 lapses[id][0] += minutesTrack;
             } else {
-                files[heartbeat.entity] = (files[heartbeat.entity] || 0) + minutesTrack;
+                if (!files[heartbeat.entity]) {
+                    files[heartbeat.entity] = { time: minutesTrack, project: heartbeat.project };
+                } else {
+                    files[heartbeat.entity].time += minutesTrack;
+                }
             }
 
 
@@ -218,16 +267,7 @@ function renderGraph(heartbeats, projects) {
     }
     renderPieChart(codingCategories, colors, hourGraph, hourGraphText);
 
-    // filesGraphScroll
-    renderListGraph(filesGraphScroll, files,
-        (key, data) => {
-            let split = key.split("/");
-            return { amt: data, name: (split[split.length - 1] || key) + ` (~${(data / 60).toFixed(1)}h)` }
-        },
-        (container, key) => {
-            container.title = key;
-        });
-    filesGraphContainer.style.display = "";
+    drawFilesGraph();
 
     // show lapses
     if (Object.keys(lapses).length > 0) {

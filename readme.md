@@ -37,3 +37,18 @@ the `s` query parameter should be a JSON object containing the following fields:
 * `projects`: string[] - list of string names of Hackatime projects to view
 
 returns a JSON object containing a link to the reviewer page for this session. valid forever.
+
+<hr>
+
+GET `/get_lapses?token=<TOKEN>&start=<START>&projects=<HACKATIME PROJECTS>&end=<OPTIONAL END>`
+
+helpful API if you just want to get a list of lapse URLs from hackatime data.
+kinda slow since it needs to parse a ton of heartbeats.
+
+query params:
+* `token` (required) - Hackatime Token
+* `start` (required) - Start date to fetch information from (YYYY-MM-DD)
+* `projects` - comma separated list of names of Hackatime projects to view
+* `end` - End date to fetch information from (YYYY-MM-DD)
+
+returns JSON object containing all lapse IDs with their respective URLs

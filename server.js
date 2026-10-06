@@ -85,43 +85,6 @@ app.get("/lookup_submissions", async function (req, res) {
     res.send(await r.json());
 });
 
-// todo: replace with POST and json body, for csrf reasons perhaps? slight code smell
-app.get('/create_session', function (req, res) {
-    let sessionText = req.query["s"];
-    if (!sessionText) {
-        res.send({ error: "Missing `s` query parameter." });
-        return;
-    }
-    let session;
-    try {
-        session = JSON.parse(sessionText);
-    } catch (error) {
-        res.send({ error: "Couldn't parse session as JSON. Error: " + error });
-        return;
-    }
-    let allowedKeys = ["token", "start", "end", "repo", "projects"];
-    let requiredKeys = ["token", "start"];
-    for (let [k, v] of Object.entries(session)) {
-        if (!allowedKeys.includes(k)) {
-            res.send({ error: "Unallowed key: " + k });
-            return;
-        }
-        let i = requiredKeys.indexOf(k);
-        if (i != -1) {
-            requiredKeys.splice(i, 1);
-        }
-    }
-    if (requiredKeys.length > 0) {
-        res.send({ error: "Missing required key(s): " + requiredKeys });
-        return;
-    }
-
-    let encrypted = encryptSession(JSON.stringify(session));
-    root = req.protocol + '://' + req.get('host') + "/";
-    res.send({ session: encrypted, link: root + "?s=" + encrypted });
-    return;
-});
-
 app.get('/callback', async (req, res) => {
     root = req.protocol + '://' + req.get('host') + "/";
     let code = req.query["code"];
@@ -272,6 +235,21 @@ function validateDates(query) {
     }
 }
 
+async function getHeartbeats(token, start, end) {
+    let reqData = {
+        credentials: "include",
+        headers: {
+            "Authorization": "Bearer " + token,
+        }
+    };
+
+    url = `https://hackatime.hackclub.com/api/v1/my/heartbeats?start_time=${start}&end_time=${end || ""}`;
+
+    let r = await fetch(url, reqData);
+    let data = await r.json();
+    return data;
+}
+
 app.get("/data", async (req, res) => {
     let query = decodeSession(req);
     let datesError = validateDates(query);
@@ -279,17 +257,8 @@ app.get("/data", async (req, res) => {
         res.send({ error: datesError });
         return;
     }
-    let reqData = {
-        credentials: "include",
-        headers: {
-            "Authorization": "Bearer " + query["token"],
-        }
-    };
 
-    url = `https://hackatime.hackclub.com/api/v1/my/heartbeats?start_time=${query["start"]}&end_time=${query["end"] || ""}`;
-
-    let r = await fetch(url, reqData);
-    let data = await r.json();
+    let data = await getHeartbeats(query.token, query.start, query.end);
     res.send(data);
 });
 
@@ -312,6 +281,81 @@ app.get("/projects", async (req, res) => {
     let r = await fetch(url, reqData);
     let data = await r.json();
     res.send(data);
+});
+
+
+app.get("/get_lapses", async (req, res) => {
+    let query = decodeSession(req);
+    let datesError = validateDates(query);
+    if (datesError) {
+        res.send({ error: datesError });
+        return;
+    }
+
+    let data = await getHeartbeats(query.token, query.start, query.end);
+    let projects = [];
+    for (let p of query.projects.split(",")) {
+        projects.push(p.trim());
+    }
+
+    let lapses = {};
+    for (let heartbeat of data.heartbeats) {
+        if (projects.length != 0 && !projects.includes(heartbeat.project)) {
+            continue;
+        }
+        if (heartbeat.category == "timelapsing" && heartbeat.editor == "lapse") {
+            // get lapse id
+            r = /(.*) \((.*)\)/gm;
+            let result = r.exec(heartbeat.entity);
+            let id;
+            if (result == null || !result[1] || !result[2]) {
+                continue
+            } else {
+                id = result[2];
+            }
+            if (lapses[id] === undefined) {
+                lapses[id] = result[1];
+            }
+        }
+    }
+    res.send(lapses);
+});
+
+// todo: replace with POST and json body, for csrf reasons perhaps? slight code smell
+app.get('/create_session', function (req, res) {
+    let sessionText = req.query["s"];
+    if (!sessionText) {
+        res.send({ error: "Missing `s` query parameter." });
+        return;
+    }
+    let session;
+    try {
+        session = JSON.parse(sessionText);
+    } catch (error) {
+        res.send({ error: "Couldn't parse session as JSON. Error: " + error });
+        return;
+    }
+    let allowedKeys = ["token", "start", "end", "repo", "projects"];
+    let requiredKeys = ["token", "start"];
+    for (let [k, v] of Object.entries(session)) {
+        if (!allowedKeys.includes(k)) {
+            res.send({ error: "Unallowed key: " + k });
+            return;
+        }
+        let i = requiredKeys.indexOf(k);
+        if (i != -1) {
+            requiredKeys.splice(i, 1);
+        }
+    }
+    if (requiredKeys.length > 0) {
+        res.send({ error: "Missing required key(s): " + requiredKeys });
+        return;
+    }
+
+    let encrypted = encryptSession(JSON.stringify(session));
+    root = req.protocol + '://' + req.get('host') + "/";
+    res.send({ session: encrypted, link: root + "?s=" + encrypted });
+    return;
 });
 
 app.listen(port, () => {

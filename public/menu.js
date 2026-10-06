@@ -29,6 +29,7 @@ let commitTypeGraphContainer = gd("commit-type-graph-container");
 let previousSubmissionsContainer = gd("previous-submissions-container");
 let previousSubmissionsScroll = gd("previous-submissions-scroll");
 let cachedRepoTree = undefined;
+let cachedRepoInfo = undefined;
 
 let cachedProjectsData = undefined;
 
@@ -73,7 +74,8 @@ async function fetchRepoTree(url, sha) {
     apiUrl = `/repo_tree?url=${url}&sha=${sha}`;
     let r = await fetch(apiUrl);
     let b = await r.json();
-    cachedRepoTree = b;
+    cachedRepoTree = b.tree;
+    cachedRepoInfo = b.info;
 
     if (Object.keys(files).length > 0) {
         drawFilesGraph();
@@ -93,6 +95,7 @@ async function fetchRepo(url) {
         return;
 
     cachedRepoTree = undefined;
+    cachedRepoInfo = undefined;
     fetchedGithubRepo = url;
 
     previousSubmissionsContainer.style.display = "none";

@@ -101,10 +101,11 @@ function drawFilesGraph() {
             }
             if (found) {
                 let url;
+                let branch = cachedRepoInfo.default_branch || "main";
                 if (urlResult.host == "github.com") {
-                    url = `${fetchedGithubRepo}/blob/main/${joinedPath}`;
+                    url = `${fetchedGithubRepo}/blob/${branch}/${joinedPath}`;
                 } else {
-                    url = `${fetchedGithubRepo}/src/branch/main/${joinedPath}`;
+                    url = `${fetchedGithubRepo}/src/branch/${branch}/${joinedPath}`;
                 }
                 container.href = url;
                 container.target = "_blank";

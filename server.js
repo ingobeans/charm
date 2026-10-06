@@ -213,7 +213,12 @@ app.get('/repo_tree', async (req, res) => {
     await fetchPaginatedData(apiUrl, headers, (data) => {
         tree = tree.concat(data.tree);
     })
-    res.send(tree);
+
+    // fetch general repo info
+    apiUrl = apiBase + `/repos/${result.owner}/${result.name}`;
+    let r = await fetch(apiUrl, headers);
+    let info = await r.json();
+    res.send({ tree: tree, info: info });
 });
 
 function decodeSession(req) {

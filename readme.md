@@ -17,7 +17,7 @@ a key difference is that it uses Hackatime tokens rather than user IDs, meaning 
 * Commit type breakdown (i.e. web uploads)
 * Support for most git hosts (GitHub/Codeberg/Forgejo/Gitea/etc)
 * Lists tracked lapses and their hour contribution
-* Shows each file sorted by hour contribution
+* Shows each file edited, sorted by hour contribution, and whether they exist in the repo (if so with link)
 * General author and repository information
 * Session system to create sharable encrypted links to data (used so YSWSs can create sessions for projects and share the links with reviewers)
 * Self Auth for testing (Button to log in with Hackatime OAuth to use your own hackatime token)

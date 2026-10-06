@@ -104,56 +104,37 @@ app.get('/callback', async (req, res) => {
     res.redirect("/?a=1")
 });
 
-app.get('/repo', async (req, res) => {
-    let url = req.query["url"];
-    let result = validateUrl(url);
-    if (!result["owner"]) {
-        res.send({ error: result });
-        return;
-    }
-
-    let commits = [];
-
+function getGitHostApiBase(host) {
     let apiBase;
-    if (result.host == "github.com") {
+    if (host == "github.com") {
         apiBase = `https://api.github.com`;
     } else {
         // guess api URL
 
         // forgejo, which most non-github git hosts is built on, 
         // uses this format:
-        apiBase = `https://${result.host}/api/v1`;
+        apiBase = `https://${host}/api/v1`;
     }
+    return apiBase
+}
 
-    // build full api URL.
-    // the ?per_page=100 param only does anything on github, but doesnt hurt to have generally
-    let apiUrl = apiBase + `/repos/${result.owner}/${result.name}/commits?per_page=100`;
-
-    let headers = {
-        "Accept": "application/json",
-        "X-GitHub-Api-Version": "2026-03-10",
-    };
-
+function getGitHostToken(host) {
     let token;
-    if (result.host == "github.com") {
+    if (host == "github.com") {
         token = githubToken;
-    } else if (result.host == "codeberg.org") {
+    } else if (host == "codeberg.org") {
         token = codebergToken;
     }
+    return token;
+}
 
-    if (token) {
-        headers["Authorization"] = "Bearer " + token;
-    }
+async function fetchPaginatedData(url, headers, callback) {
+    let apiRes = await fetch(url, { headers: headers });
 
-    let apiRes = await fetch(apiUrl, { headers: headers });
-
-
-    // loop because api is paginated,
-    // so sometimes more requests are needed
-    // to read all pages of data
+    // 15 is max loop depth
     for (let i = 0; i < 15; i++) {
         let body = await apiRes.json();
-        commits = commits.concat(body);
+        callback(body);
 
         // response contains a "link" header,
         // if there are more pages to be read.
@@ -165,13 +146,74 @@ app.get('/repo', async (req, res) => {
             // check that the link actually points to the next page
             // of data, rather than the first.
             if (!entry.includes('rel="next"')) { break; }
-            apiUrl = link.split(";")[0].replace("<", "").replace(">", "");
-            apiRes = await fetch(apiUrl, { headers: headers });
+            url = link.split(";")[0].replace("<", "").replace(">", "");
+            apiRes = await fetch(url, { headers: headers });
         } else {
             break;
         }
     }
+}
+
+app.get('/repo', async (req, res) => {
+    let url = req.query["url"];
+    let result = validateUrl(url);
+    if (!result["owner"]) {
+        res.send({ error: result });
+        return;
+    }
+
+    let commits = [];
+
+    let apiBase = getGitHostApiBase(result.host);
+
+    // build full api URL.
+    // the ?per_page=100 param only does anything on github, but doesnt hurt to have generally
+    let apiUrl = apiBase + `/repos/${result.owner}/${result.name}/commits?per_page=100`;
+
+    let headers = {
+        "Accept": "application/json",
+        "X-GitHub-Api-Version": "2026-03-10",
+    };
+    let token = getGitHostToken(result.host);
+
+    if (token) {
+        headers["Authorization"] = "Bearer " + token;
+    }
+
+    await fetchPaginatedData(apiUrl, headers, (data) => {
+        commits = commits.concat(data);
+    })
     res.send(commits);
+});
+
+
+app.get('/repo_tree', async (req, res) => {
+    let url = req.query["url"];
+    let result = validateUrl(url);
+    if (!result["owner"]) {
+        res.send({ error: result });
+        return;
+    }
+
+    let treeSha = req.query["sha"];
+
+    let apiBase = getGitHostApiBase(result.host);
+    let apiUrl = apiBase + `/repos/${result.owner}/${result.name}/git/trees/${treeSha}?recursive=1`;
+
+    let headers = {
+        "Accept": "application/json",
+        "X-GitHub-Api-Version": "2026-03-10",
+    };
+    let token = getGitHostToken(result.host);
+    if (token) {
+        headers["Authorization"] = "Bearer " + token;
+    }
+
+    let tree = [];
+    await fetchPaginatedData(apiUrl, headers, (data) => {
+        tree = tree.concat(data.tree);
+    })
+    res.send(tree);
 });
 
 function decodeSession(req) {

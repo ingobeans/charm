@@ -466,7 +466,7 @@ function parseCommits(commits) {
             return;
         }
         let commitType = "regular";
-        if (commit.committer.login == "web-flow") {
+        if (commit.committer && commit.committer.login == "web-flow") {
             commitType = "web upload";
         }
         commitTypes[commitType] = (commitTypes[commitType] || 0) + 1;

@@ -28,6 +28,7 @@ let hourGraphContainer = gd("hour-graph-container");
 let commitTypeGraphContainer = gd("commit-type-graph-container");
 let previousSubmissionsContainer = gd("previous-submissions-container");
 let previousSubmissionsScroll = gd("previous-submissions-scroll");
+let cachedRepoTree = undefined;
 
 let cachedProjectsData = undefined;
 
@@ -68,18 +69,26 @@ async function fetchPreviousSubmissions(url) {
     previousSubmissionsContainer.style.display = "";
 }
 
+async function fetchRepoTree(url, sha) {
+    apiUrl = `/repo_tree?url=${url}&sha=${sha}`;
+    let r = await fetch(apiUrl);
+    let b = await r.json();
+    cachedRepoTree = b;
+}
+
 async function fetchRepo(url) {
     let result = validateUrl(url);
     if (!result["owner"]) {
         return;
     }
     if (url.endsWith(".git")) {
-        url = url.replace(".git","");
-        result.name = result.name.replace(".git","");
+        url = url.replace(".git", "");
+        result.name = result.name.replace(".git", "");
     }
     if (url == fetchedGithubRepo)
         return;
 
+    cachedRepoTree = undefined;
     fetchedGithubRepo = url;
 
     previousSubmissionsContainer.style.display = "none";
@@ -101,6 +110,7 @@ async function fetchRepo(url) {
         repoError.innerHTML = "";
         repoName.innerText = result.name;
         repoCommits.innerText = commitCount + " commits";
+        fetchRepoTree(url, b[0].sha);
     }
     repoLink.href = url;
     repoLink.innerText = "View";

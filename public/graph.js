@@ -96,8 +96,9 @@ function drawFilesGraph() {
 
             let found = false;
             for (let item of cachedRepoTree) {
-                if (item.type == "tree" || item.path != joinedPath) { continue }
-                found = true;
+                if (item.type != "tree" && item.path == joinedPath) {
+                    found = true; break;
+                }
             }
             if (found) {
                 let url;

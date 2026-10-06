@@ -151,10 +151,21 @@ app.get('/repo', async (req, res) => {
 
     let commits = [];
 
-    let apiUrl = `https://api.github.com/repos/${result.owner}/${result.name}/commits?per_page=100`;
-    if (result.host == "codeberg.org") {
-        apiUrl = `https://codeberg.org/api/v1/repos/${result.owner}/${result.name}/commits?per_page=100`;
+    let apiBase;
+    if (result.host == "github.com") {
+        apiBase = `https://api.github.com`;
+    } else {
+        // guess api URL
+
+        // forgejo, which most non-github git hosts is built on, 
+        // uses this format:
+        apiBase = `https://${result.host}/api/v1`;
     }
+
+    // build full api URL.
+    // the ?per_page=100 param only does anything on github, but doesnt hurt to have generally
+    let apiUrl = apiBase + `/repos/${result.owner}/${result.name}/commits?per_page=100`;
+
     let headers = {
         "Accept": "application/json",
         "X-GitHub-Api-Version": "2026-03-10",

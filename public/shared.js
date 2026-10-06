@@ -9,9 +9,6 @@ validateUrl = function (url) {
     if (!["http:", "https:"].includes(urlObj.protocol))
         return "Bad Url protocol. Must be http/https";
 
-    if (!["github.com", "codeberg.org"].includes(urlObj.host))
-        return "Bad host. Must be github.com or codeberg.org";
-
     let path = urlObj.pathname.split("/");
     if (path.length < 3)
         return "Bad repo path";

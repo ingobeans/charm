@@ -15,6 +15,7 @@ a key difference is that it uses Hackatime tokens rather than user IDs, meaning 
 * Selectable timeline
 * Hour breakdown (i.e. ai-coding rates, timelapses, etc)
 * Commit type breakdown (i.e. web uploads)
+* Support for most git hosts (GitHub/Codeberg/Forgejo/Gitea/etc)
 * Lists tracked lapses and their hour contribution
 * Shows each file sorted by hour contribution
 * General author and repository information
@@ -32,7 +33,7 @@ the `s` query parameter should be a JSON object containing the following fields:
 * `token` (required): string - Hackatime Token
 * `start` (required): date string - Start date to fetch information from (YYYY-MM-DD)
 * `end`: date string - End date to fetch information from (YYYY-MM-DD)
-* `repo`: url string - URL of GitHub repository. 
+* `repo`: url string - URL of repository. 
 * `projects`: string[] - list of string names of Hackatime projects to view
 
 returns a JSON object containing a link to the reviewer page for this session. valid forever.

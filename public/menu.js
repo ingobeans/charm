@@ -75,6 +75,9 @@ async function fetchRepo(url) {
     if (!result["owner"]) {
         return;
     }
+    if (url.endsWith(".git")) {
+        url = url.replace(".git","");
+    }
 
     fetchedGithubRepo = url;
 

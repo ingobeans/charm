@@ -90,7 +90,10 @@ function drawFilesGraph() {
             let parts = key.split("/");
             let project = files[key].project;
             let projectIndex = parts.indexOf(project);
-            if (projectIndex == -1) { return; }
+            if (projectIndex == -1) {
+                container.style.color = "var(--muted-text-color)";
+                return;
+            }
             let relativeParts = parts.slice(projectIndex + 1);
             let joinedPath = relativeParts.join("/");
 

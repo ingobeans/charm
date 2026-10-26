@@ -419,6 +419,11 @@ th {
     border-radius: 100%;
 }
 
+.pie-chart-text {
+    max-height: 86px;
+    overflow: auto;
+}
+
 .pie-chart-text>label {
     margin-top: 4px;
 }
@@ -487,7 +492,7 @@ th {
 
 #lapses-scroll,
 #files-graph-scroll {
-    max-height: 167px;
+    max-height: 190px;
     overflow-y: auto;
 }
 

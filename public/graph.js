@@ -2,6 +2,8 @@ let graphYLabels = gd("graph-y-labels");
 let graphCanvas = gd("graph-canvas");
 let hourGraph = gd("hour-graph");
 let hourGraphText = gd("hour-graph-text");
+let languageGraph = gd("language-graph");
+let languageGraphText = gd("language-graph-text");
 let commitTypeGraph = gd("commit-type-graph");
 let commitTypeGraphText = gd("commit-type-graph-text");
 let timelineCanvas = gd("timeline-canvas");
@@ -23,7 +25,7 @@ function parsePx(px) {
     return parseInt(px.replace("px", ""))
 }
 
-function renderPieChart(data, colors, graphElement, graphTextElement) {
+function renderPieChart(data, colors, graphElement, graphTextElement, lowercase_keys = false) {
     if (graphTextElement) {
         graphTextElement.innerHTML = "";
     }
@@ -48,8 +50,10 @@ function renderPieChart(data, colors, graphElement, graphTextElement) {
             graphTextElement.appendChild(element);
         }
 
-        // find color by category (with backups since i dont want to type one for every possibly hb category)
-        let color = colors[k];
+        // find color by category (with backups)
+
+        let colorKey = lowercase_keys ? k.toLowerCase() : k;
+        let color = colors[colorKey];
         if (!color) {
             color = backupColors[index];
             index++;
@@ -164,6 +168,7 @@ let cachedDates = undefined;
 let cachedFirstTime = undefined;
 let cachedLastTime = undefined;
 let cachedCodingCategories = undefined;
+let cachedLanguages = undefined;
 let cachedTimelineWidth = undefined;
 let cachedTimelineHorizontalScale = undefined;
 let cachedMaxDays = undefined;
@@ -176,6 +181,7 @@ let files = {}
 function renderGraph(heartbeats, projects) {
     let registeredTimes = {};
     let codingCategories = {};
+    let languages = {};
 
     let minutesTrack = 2;
     let dates = {};
@@ -187,6 +193,7 @@ function renderGraph(heartbeats, projects) {
         lastTime = cachedLastTime;
         firstTime = cachedFirstTime;
         codingCategories = cachedCodingCategories;
+        languages = cachedLanguages;
     } else if (!heartbeats) {
         return;
     } else {
@@ -245,6 +252,10 @@ function renderGraph(heartbeats, projects) {
                 }
             }
 
+            if (heartbeat.language) {
+                languages[heartbeat.language] = (languages[heartbeat.language] || 0) + minutesTrack;
+            }
+
 
             codingCategories[category] = (codingCategories[category] || 0) + minutesTrack;
             dates[dateValue] = (dates[dateValue] || 0) + minutesTrack;
@@ -256,6 +267,7 @@ function renderGraph(heartbeats, projects) {
     if (firstCommitDay && firstCommitDay < firstTime) {
         firstTime = firstCommitDay;
     }
+    cachedLanguages = languages;
     cachedCodingCategories = codingCategories;
     hourGraphContainer.style.display = "";
 
@@ -271,6 +283,9 @@ function renderGraph(heartbeats, projects) {
         "debugging": "rgb(255, 162, 131)",
     }
     renderPieChart(codingCategories, colors, hourGraph, hourGraphText);
+
+    renderPieChart(languages, LanguageColors, languageGraph, languageGraphText, true);
+    languageGraphContainer.style.display = "";
 
     drawFilesGraph();
 

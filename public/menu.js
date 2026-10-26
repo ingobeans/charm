@@ -25,6 +25,7 @@ let repoLink = gd("repo-link");
 let repoError = gd("repo-error");
 let graphSection = gd("graph-section");
 let hourGraphContainer = gd("hour-graph-container");
+let languageGraphContainer = gd("language-graph-container");
 let commitTypeGraphContainer = gd("commit-type-graph-container");
 let previousSubmissionsContainer = gd("previous-submissions-container");
 let previousSubmissionsScroll = gd("previous-submissions-scroll");
@@ -296,6 +297,7 @@ function startLoadingGraph() {
     graphSection.classList.add("loading");
     graphSection.style.display = "";
     hourGraphContainer.style.display = "none";
+    languageGraphContainer.style.display = "none";
 }
 
 function viewProjects() {

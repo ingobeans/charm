@@ -15,6 +15,7 @@ a key difference is that it uses Hackatime tokens rather than user IDs, meaning 
 * Selectable timeline
 * Hour breakdown (i.e. ai-coding rates, timelapses, etc)
 * Commit type breakdown (i.e. web uploads)
+* Programming language pie chart
 * Support for most git hosts (GitHub/Codeberg/Forgejo/Gitea/etc)
 * Lists tracked lapses and their hour contribution
 * Shows each file edited, sorted by hour contribution, and whether they exist in the repo (if so with link)

@@ -25,7 +25,7 @@ function parsePx(px) {
     return parseInt(px.replace("px", ""))
 }
 
-function renderPieChart(data, colors, graphElement, graphTextElement, lowercase_keys = false) {
+function renderPieChart(data, colors, graphElement, graphTextElement, lowercase_keys = false, pastellify_colors = false) {
     if (graphTextElement) {
         graphTextElement.innerHTML = "";
     }
@@ -38,7 +38,6 @@ function renderPieChart(data, colors, graphElement, graphTextElement, lowercase_
     let gradientStyle = "";
     let lastPercent = undefined;
     let index = 0;
-    let backupColors = ["red", "blue", "orange", "green", "yellow", "white", "lime", "fuchsia"];
 
     for (let k of keysSorted) {
         let percent = data[k] / total * 100;
@@ -55,8 +54,13 @@ function renderPieChart(data, colors, graphElement, graphTextElement, lowercase_
         let colorKey = lowercase_keys ? k.toLowerCase() : k;
         let color = colors[colorKey];
         if (!color) {
-            color = backupColors[index];
+            color = { h: (index * 10.0) % 360.0, s: 84.9 / 100.0, l: 61 / 100.0 };
+            console.log(color);
+            color = hslToRGB(color);
+            console.log(color);
             index++;
+        } else if (pastellify_colors) {
+            color = pastellify(color);
         }
 
         // generate the pie chart css
@@ -72,6 +76,14 @@ function renderPieChart(data, colors, graphElement, graphTextElement, lowercase_
         gradientStyle += color + " " + percent + "%,";
     }
     graphElement.style.backgroundImage = "conic-gradient(" + gradientStyle.substring(0, gradientStyle.length - 1) + ")";
+    console.log("conic-gradient(" + gradientStyle.substring(0, gradientStyle.length - 1) + ")");
+}
+
+function pastellify(rgb) {
+    var hsl = rgbToHSL(rgb);
+    hsl.l = Math.min(1.0, Math.pow(hsl.l, 0.4));
+    hsl.s = Math.min(1.0, hsl.s * 1.5);
+    return hslToRGB(hsl);
 }
 
 function drawFilesGraph() {
@@ -284,7 +296,7 @@ function renderGraph(heartbeats, projects) {
     }
     renderPieChart(codingCategories, colors, hourGraph, hourGraphText);
 
-    renderPieChart(languages, LanguageColors, languageGraph, languageGraphText, true);
+    renderPieChart(languages, LanguageColors, languageGraph, languageGraphText, true, true);
     languageGraphContainer.style.display = "";
 
     drawFilesGraph();

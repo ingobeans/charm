@@ -264,7 +264,7 @@ function renderGraph(heartbeats, projects) {
                 }
             }
 
-            if (heartbeat.language) {
+            if (heartbeat.language && heartbeat.language != "Lapse") {
                 languages[heartbeat.language] = (languages[heartbeat.language] || 0) + minutesTrack;
             }
 

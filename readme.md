@@ -23,6 +23,11 @@ a key difference is that it uses Hackatime tokens rather than user IDs, meaning 
 * Session system to create sharable encrypted links to data (used so YSWSs can create sessions for projects and share the links with reviewers)
 * Self Auth for testing (Button to log in with Hackatime OAuth to use your own hackatime token)
 
+## How to use
+
+in a real application, you'd have a YSWS that uses charm's API to generate sessions (i.e. a hyperlink that loads all the information automatically, like the hackatime token, project names, github repo etc).
+
+if you just want to test it out, you can click the "Self Auth" button by the hackatime token field, to use your own hackatime token. you can then fill out the fields manually and see the result. 
 
 ## API
 

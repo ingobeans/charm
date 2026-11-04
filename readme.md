@@ -22,6 +22,7 @@ a key difference is that it uses Hackatime tokens rather than user IDs, meaning 
 * General author and repository information
 * Session system to create sharable encrypted links to data (used so YSWSs can create sessions for projects and share the links with reviewers)
 * Self Auth for testing (Button to log in with Hackatime OAuth to use your own hackatime token)
+* Dark/Light mode!
 
 ## How to use
 
